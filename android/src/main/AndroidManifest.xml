@@ -1,0 +1,44 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.mc_custom_notification">
+<uses-permission android:name="android.permission.VIBRATE" />
+<uses-permission android:name="android.permission.RECORD_AUDIO"/>
+<uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS"/>
+
+
+    <application>
+
+        <!-- Register the receiver from the library -->
+     <receiver android:name=".NotificationReceiver"
+    android:exported="true">
+    <intent-filter>
+        <action android:name="com.mc_custom_notification.FULL_SCREEN"/>
+        <action android:name="com.mc_custom_notification.ACCEPT"/>
+        <action android:name="com.mc_custom_notification.DECLINE"/>
+        <action android:name="com.mc_custom_notification.CLICK"/>
+        <action android:name="com.mc_custom_notification.REPLY_ACTION"/>
+        <action android:name="com.mc_custom_notification.READ_ACTION"/>
+        <action android:name="com.mc_custom_notification.CLICK_CALLING_ACTION"/>
+        <action android:name="com.mc_custom_notification.MIC_CALL_ACTION"/>
+        <action android:name="com.mc_custom_notification.SPEAKER_ACTION"/>
+        <action android:name="com.mc_custom_notification.END_CALLING_ACTION"/>
+    </intent-filter>
+</receiver>
+
+
+        <!-- Add your activities, services, etc. here -->
+        <service
+            android:name=".CostumNotificationCallPlugin"
+            android:exported="true">
+          
+            <meta-data
+                android:name="io.flutter.embedding.android.SplashScreenDrawable"
+                android:resource="@drawable/launch_background" />
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </service>
+
+    </application>
+</manifest>
