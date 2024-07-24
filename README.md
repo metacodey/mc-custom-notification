@@ -1,6 +1,6 @@
 # mc_custom_notification
 
-A new Flutter plugin project.
+Custom notifications, call notifications, message notifications, call notifications, regular notifications, Firebase notifications
 
 ## Getting Started
 
