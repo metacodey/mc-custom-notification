@@ -12,8 +12,6 @@ class FCMService {
       String firebaseMessagingScope =
           'https://www.googleapis.com/auth/firebase.messaging';
 
-      //get the service account from the environment variables or from the .env file where it has been stored.
-      //it is advised not to hardcode the service account details in the code
       Map<String, dynamic> serviceAccount = {
         "type": "service_account",
         "project_id": "test-notification-f021c",

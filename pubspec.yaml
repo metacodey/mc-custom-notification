@@ -1,7 +1,7 @@
 name: mc_custom_notification
-description: A new Flutter plugin project.
+description: Custom notifications, call notifications, message notifications, call notifications, regular notifications, Firebase notifications.
 version: 0.0.1
-homepage:
+homepage: https://github.com/metacodey/mc-custom-notification.git
 
 environment:
   sdk: '>=3.1.5 <4.0.0'

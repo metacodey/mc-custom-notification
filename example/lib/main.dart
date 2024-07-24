@@ -75,7 +75,7 @@ class _MyAppState extends State<MyApp> {
               ElevatedButton(
                 child: const Text('Show showNotification call'),
                 onPressed: () async {
-                  _testpluginPlugin.showNotificationCall(
+                  McCustomNotification().showNotificationCall(
                       model: NotificationCall(
                     id: 1,
                     tag: 'tag1',
