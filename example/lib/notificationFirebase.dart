@@ -1,20 +1,13 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:async';
-import 'dart:convert';
 import 'dart:developer';
 import 'package:mc_custom_notification/mc_custom_notification.dart';
-import 'package:mc_custom_notification/models/notification.dart';
-import 'package:mc_custom_notification/models/notification_call.dart';
-import 'package:costum_notification_call_example/androidNotificatonDetails.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:mc_custom_notification/models/notification_message.dart';
-import 'package:timezone/data/latest.dart' as tz;
 
 NotificationService notificationService = NotificationService();
 
 class NotificationService {
-  int i = 0;
   static final NotificationService _notificationService =
       NotificationService._internal();
 
@@ -23,45 +16,6 @@ class NotificationService {
   }
 
   NotificationService._internal();
-
-  static const channelId = 'your_channel_id';
-  static const channelName = 'your_channel_name';
-
-  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-      FlutterLocalNotificationsPlugin();
-
-  Future<void> init() async {
-    initPushNotification();
-    flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<
-        AndroidFlutterLocalNotificationsPlugin>();
-
-    // await platform?.createNotificationChannel(androidNotificationChannel);
-    const AndroidInitializationSettings initializationSettingsAndroid =
-        AndroidInitializationSettings('@mipmap/ic_launcher');
-
-    const DarwinInitializationSettings initializationSettingsIOS =
-        DarwinInitializationSettings(
-      requestSoundPermission: false,
-      requestBadgePermission: false,
-      requestAlertPermission: false,
-    );
-
-    const InitializationSettings initializationSettings =
-        InitializationSettings(
-      android: initializationSettingsAndroid,
-      iOS: initializationSettingsIOS,
-      macOS: null,
-    );
-
-    tz.initializeTimeZones();
-
-    await flutterLocalNotificationsPlugin.initialize(
-      initializationSettings,
-      onDidReceiveBackgroundNotificationResponse:
-          onDidReceiveNotificationResponse,
-      onDidReceiveNotificationResponse: onDidReceiveNotificationResponse,
-    );
-  }
 
   Future<void> initPushNotification() async {
     await FirebaseMessaging.instance
@@ -109,36 +63,6 @@ class NotificationService {
     // novigatorKey.currentState?.pushNamed(HomeScreen.route, arguments: message);
   }
 
-  Future<void> showNotifications(
-      String? title, String? body, String payload) async {
-    await flutterLocalNotificationsPlugin.show(
-      i++,
-      title,
-      body,
-      payload: payload,
-      NotificationDetails(android: androidNotificationDetails),
-    );
-  }
-
-  Future<void> showForegroundNotifications(
-      String? title, String? body, String payload) async {
-    await flutterLocalNotificationsPlugin.show(
-      i++,
-      title,
-      body,
-      payload: payload,
-      NotificationDetails(android: androidNotificationDetails),
-    );
-  }
-
-  Future<void> cancelNotifications(int id) async {
-    await flutterLocalNotificationsPlugin.cancel(id);
-  }
-
-  Future<void> cancelAllNotifications() async {
-    await flutterLocalNotificationsPlugin.cancelAll();
-  }
-
   Future<String> initializeFirebaseMessaging() async {
     try {
       await FirebaseMessaging.instance.requestPermission(
@@ -160,11 +84,6 @@ class NotificationService {
       return "";
     }
   }
-}
-
-void onDidReceiveNotificationResponse(NotificationResponse details) async {
-  print(
-      "-----------------------------------------------------------2222222222222");
 }
 
 Future<void> handeleBachgroundMessage(RemoteMessage message) async {
