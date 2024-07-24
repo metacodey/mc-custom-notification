@@ -1,6 +1,6 @@
 # MC Custom Notification
 
-[pub package <img src="https://meta-code-ye.com/mcwebsit/web/images/logo.png" width="40" /> ](https://pub.dev/packages/mc_custom_notification)
+[pub package](https://pub.dev/packages/mc_custom_notification)
 
 
 Custom notifications, call notifications, message notifications, call notifications, regular notifications, Firebase notifications
@@ -22,6 +22,9 @@ Custom notifications, call notifications, message notifications, call notificati
 | Feature/platform   | Android | iOS | Web              | macOS            | Windows          | Linux            |
 | ------------------ | ------- | --- | ---------------- | ---------------- | ---------------- | ---------------- |
 | Notification       | ✓       | ╳   | ╳                | ╳                | ╳ <sup>(1)</sup> | ╳ <sup>(1)</sup> |
+
+
+## Features
 
 
 1. Show incoming call notification Event to answer Event to reject
