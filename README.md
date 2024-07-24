@@ -1,6 +1,6 @@
 # MC Custom Notification
 
-[![pub package](0.0.1)](https://pub.dev/packages/mc_custom_notification)
+[![pub package](<img src="https://meta-code-ye.com/images/favicon.png" width="200" />)](https://pub.dev/packages/mc_custom_notification)
 
 
 Custom notifications, call notifications, message notifications, call notifications, regular notifications, Firebase notifications
