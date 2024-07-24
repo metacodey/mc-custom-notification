@@ -7,7 +7,11 @@ Custom notifications, call notifications, message notifications, call notificati
 
 > Please contribute to the [discussion](https://github.com/metacodey/mc-custom-notification/issues) with issues.
 
-[<img src="https://meta-code-ye.com/mcwebsit/web/images/logo.png" width="200" />](https://flutter.dev/docs/development/packages-and-plugins/favorites)
+[<img src="https://meta-code-ye.com/mcwebsit/web/images/logo.png" width="200" />](https://meta-code-ye.com)
+
+## screenShot
+[<img src="https://meta-code-ye.com/images/image/1.jpg" width="200" />]
+
 
 ## Platform support
 
