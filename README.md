@@ -95,7 +95,12 @@ import 'package:mc_custom_notification/models/notification_call.dart';
 ```
 
 
+
+
 Here's a quick example that shows how to use a `NotificationCalling` in your app
+
+
+
 
 ```dart
 import 'package:mc_custom_notification/models/notification_calling.dart';
@@ -116,7 +121,11 @@ import 'package:mc_custom_notification/models/notification_calling.dart';
 
 ```
 
+
+
 Here's a quick example that shows how to use a `NotificationMessage` in your app
+
+
 
 ```dart
 import 'package:mc_custom_notification/models/notification_message.dart';
@@ -147,6 +156,8 @@ import 'package:mc_custom_notification/models/notification_message.dart';
 
 Here's a quick example that shows how to use a `Send Notification With Firebase` in your app
 
+
+
 ```dart
   McCustomNotification().initialize(
     projectId: "id of your project in firebase",
@@ -175,7 +186,10 @@ McCustomNotification.sendNotification(
 
 
 
+
 Here's a quick example that shows how to use a `Notification With Firebase in Background` in your app
+
+
 
 ```dart
 
@@ -204,7 +218,11 @@ Future<void> handeleBachgroundMessage(RemoteMessage message) async {
 ```
 
 
+
 Here's a quick example that shows how to use a `Notification With Firebase in forgrounde` in your app
+
+
+
 
 ```dart
 
@@ -231,7 +249,12 @@ Here's a quick example that shows how to use a `Notification With Firebase in fo
 
 ```
 
+
+
 The rest of the things are explained in the example
+
+
+
 
 ## About us
 

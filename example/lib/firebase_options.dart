@@ -52,6 +52,13 @@ class DefaultFirebaseOptions {
     }
   }
 
+  // static const FirebaseOptions android = FirebaseOptions(
+  //   apiKey: '',
+  //   appId: '',
+  //   messagingSenderId: '',
+  //   projectId: '',
+  //   storageBucket: '',
+  // );
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyCei38K7mN86eVKRZ_7ru_xJ1ZprfMj46E',
     appId: '1:677584149693:android:8833c0d822ffc763322bd4',
