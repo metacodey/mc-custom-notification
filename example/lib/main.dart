@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:mc_custom_notification/models/preferences.dart';
 import 'package:mc_custom_notification/mc_custom_notification.dart';
 import 'package:mc_custom_notification/models/notification.dart';
 import 'package:mc_custom_notification/models/notification_call.dart';
@@ -5,24 +8,28 @@ import 'package:mc_custom_notification/models/notification_calling.dart';
 import 'package:mc_custom_notification/models/notification_message.dart';
 import 'package:costum_notification_call_example/firebase_options.dart';
 import 'package:costum_notification_call_example/notificationFirebase.dart';
-import 'package:costum_notification_call_example/send.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Preferences.initPref();
+  await dotenv.load(fileName: ".env");
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  notificationService.initializeFirebaseMessaging();
+  notificationService.init();
+
   FirebaseMessaging.onBackgroundMessage(handeleBachgroundMessage);
+  var map = jsonDecode(dotenv.env['ACCOUNT_SERVICES'] ?? '');
   McCustomNotification().initialize(
+    projectId: "test-notification-f021c",
+    serviceAccount: map,
     onClick: (payload) {
-      print(payload);
-      print("click");
-      print("---------7777777777777777777777777777777777777777777777777777");
+      //set here event when click notifications
     },
   );
   runApp(const MyApp());
@@ -85,15 +92,10 @@ class _MyAppState extends State<MyApp> {
                     payload: {'id': 55, "name": "ali"},
                     groupKey: "call",
                     onAccepted: (payload) {
-                      print(payload);
-                      print("accept from class");
-                      print(
-                          "---------88888888888888888888888888888888888888888888888888");
+                      //set event when answer
                     },
                     onDenied: () {
-                      print("denied from class");
-                      print(
-                          "---------9999999999999999999999999999999999999999999999999999999");
+                      //set event when denied
                     },
                   ));
                 },
@@ -112,14 +114,10 @@ class _MyAppState extends State<MyApp> {
                     payload: {'id': 55, "name": "ali"},
                     groupKey: "chat",
                     onRead: (payload) {
-                      print("read it from class");
-                      print(
-                          "---------9999999999999999999999999999999999999999999999999999999");
+                      //set here event to read massage
                     },
                     onReply: (payload) {
-                      print("replay it from class");
-                      print(
-                          "---------9999999999999999999999999999999999999999999999999999999");
+                      //set here event to replay massage
                     },
                   ));
                 },
@@ -149,9 +147,7 @@ class _MyAppState extends State<MyApp> {
                       payload: {'id': 55, "name": "ali"},
                       groupKey: "normal53",
                       onEndCall: (payload) {
-                        print("onEndCall it from class");
-                        print(
-                            "---------9999999999999999999999999999999999999999999999999999999");
+                        //set here event to end call
                       },
                     ),
                   );
@@ -171,14 +167,20 @@ class _MyAppState extends State<MyApp> {
                 },
               ),
               ElevatedButton(
-                onPressed: () {
-                  FCMService().sendNotification(
-                      recipientFCMToken:
-                          "d4fXiNycRGaMBthYK2UeXQ:APA91bFfqx15bYcPuALA8aPiwIBiCF5nJ6RxuVTz8jQRbgig7HzWb2MS1ABte6hgz8et8MBKjIGHrxWd2tE8XvJX1qmTyUZZmNuNpLiVqS94Toaryt2OgZTI7gdGAPX589wyXQO4luiG",
-                      body: "test test",
-                      title: "test test");
+                onPressed: () async {
+                  var token = await notificationService.getToken();
+                  _testpluginPlugin.sendNotification(
+                      token: token,
+                      model: NotificationModel(
+                        title: "younas ali",
+                        body: "hello how are you",
+                        id: 150,
+                        image:
+                            "https://vpsserver.meta-code-ye.com/files/image?name=IMG-20240314-WA0007.jpg",
+                        payload: {"id": 1, "name": "younas"},
+                      ));
                 },
-                child: Text('Send Chat Message'),
+                child: const Text('Send Chat Message'),
               ),
             ],
           ),

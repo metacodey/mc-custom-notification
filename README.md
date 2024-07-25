@@ -3,7 +3,7 @@
 [pub package](https://pub.dev/packages/mc_custom_notification)
 
 
-Custom notifications, call notifications, message notifications, call notifications, regular notifications, Firebase notifications
+Custom notifications, call notifications, message notifications, calling notifications, regular notifications, Firebase notifications
 
 > Please contribute to the [discussion](https://github.com/metacodey/mc-custom-notification/issues) with issues.
 
@@ -36,9 +36,10 @@ Custom notifications, call notifications, message notifications, call notificati
 5. Cancel all notifications
 6. Cancel a specific notification
 7. Get all notifications
-8. All notices contain the title of the notice, the image of the notice, the body of the notice, the payload of the notice, the hands of the notice, and the tag of the notice
-9. You can use Firebase and cancel notifications for work in the background by sending a tag to this library, and the id must be =0
-10. When you click on the notification, if the application is closed, it opens it, and if it is running in the background, it opens it as well.
+8. Sending notifications using Firebase.
+9. All notices contain the title of the notice, the image of the notice, the body of the notice, the payload of the notice, the hands of the notice, and the tag of the notice
+10. You can use Firebase to receive notifications in the foreground and background without Firebase notifications appearing
+11. When you click on the notification, if the application is closed, it opens it, and if it is running in the background, it opens it as well.
 
 
 ## Installation
@@ -50,8 +51,8 @@ flutter pub add mc_custom_notification
 ## Example
 
 
-## Initialized Library
-start with Initialized mc_custom_notification
+## Initializing Library
+start with Initializing mc_custom_notification
 ```dart
 import 'package:mc_custom_notification/mc_custom_notification.dart';
 
@@ -69,7 +70,7 @@ Future<void> main() async {
 
 ```
 
-Here's a quick example that shows how to build a `NotificationCall` in your app
+Here's a quick example that shows how to use a `NotificationCall` in your app
 
 ```dart
 import 'package:mc_custom_notification/models/notification_call.dart';
@@ -94,7 +95,7 @@ import 'package:mc_custom_notification/models/notification_call.dart';
 ```
 
 
-Here's a quick example that shows how to build a `NotificationCalling` in your app
+Here's a quick example that shows how to use a `NotificationCalling` in your app
 
 ```dart
 import 'package:mc_custom_notification/models/notification_calling.dart';
@@ -115,7 +116,7 @@ import 'package:mc_custom_notification/models/notification_calling.dart';
 
 ```
 
-Here's a quick example that shows how to build a `NotificationMessage` in your app
+Here's a quick example that shows how to use a `NotificationMessage` in your app
 
 ```dart
 import 'package:mc_custom_notification/models/notification_message.dart';
@@ -137,6 +138,96 @@ import 'package:mc_custom_notification/models/notification_message.dart';
                      //set here what you want to do when the notification message is rplay
                     },
                   ));
+
+```
+
+## Firebase
+
+
+
+Here's a quick example that shows how to use a `Send Notification With Firebase` in your app
+
+```dart
+  McCustomNotification().initialize(
+    projectId: "id of your project in firebase",
+    serviceAccount: {}// serviceAccount from firebase you can get it from google cloude,
+    onClick: (payload) {
+      //set here event when click notifications
+    },
+  );
+
+
+
+McCustomNotification.sendNotification(
+                      token: token,
+                      model: NotificationModel(
+                        title: "younas ali",
+                        body: "hello how are you",
+                        id: 150,
+                        image:
+                            "https://vpsserver.meta-code-ye.com/files/image?name=IMG-20240314-WA0007.jpg",
+                        payload: {"id": 1, "name": "younas"},
+                      ));
+
+                      
+
+```
+
+
+
+Here's a quick example that shows how to use a `Notification With Firebase in Background` in your app
+
+```dart
+
+  FirebaseMessaging.onBackgroundMessage(handeleBachgroundMessage);
+
+Future<void> handeleBachgroundMessage(RemoteMessage message) async {
+  var payloadData = message.data;
+  log(payloadData.toString());
+  var model = NotificationModel.fromMap(payloadData);
+  McCustomNotification().showNotificationMessage(
+      model: NotificationMessage(
+    id: 1,
+    tag: message.notification?.android?.tag,
+    title: model.title,
+    body: model.body,
+    image: model.image,
+    payload: model.payload,
+    onRead: (payload) {
+      //set here event to read massage
+    },
+    onReply: (payload) {
+      //set here event to replay massage
+    },
+  ));
+
+```
+
+
+Here's a quick example that shows how to use a `Notification With Firebase in forgrounde` in your app
+
+```dart
+
+  FirebaseMessaging.onMessage.listen((event) {
+      final payload = event.data;
+
+      var model = NotificationModel.fromMap(payload);
+      McCustomNotification().showNotificationMessage(
+          model: NotificationMessage(
+        id: 1,
+        tag: model.tag,
+        title: model.title,
+        body: model.body,
+        image: model.image,
+        payload: model.payload,
+        onRead: (payload) {
+          //set here event to read massage
+        },
+        onReply: (payload) {
+          //set here event to replay massage
+        },
+      ));
+    });
 
 ```
 

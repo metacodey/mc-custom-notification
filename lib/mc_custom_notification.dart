@@ -5,14 +5,26 @@ import 'package:mc_custom_notification/models/notification.dart';
 import 'package:mc_custom_notification/models/notification_call.dart';
 import 'package:mc_custom_notification/models/notification_calling.dart';
 import 'package:mc_custom_notification/models/notification_message.dart';
+import 'package:mc_custom_notification/models/preferences.dart';
+
+import 'models/send_notification.dart';
 
 class McCustomNotification {
-  void initialize({
-    Function(dynamic payload)? onClick,
-  }) {
+  void initialize(
+      {Function(dynamic payload)? onClick,
+      String? projectId,
+      Map<String, dynamic>? serviceAccount}) async {
     McCustomNotificationPlatform.instance.initialize(
       onClick: onClick,
     );
+    await Preferences.initPref();
+    if (projectId != null) {
+      Preferences.setString(Preferences.projectId, projectId);
+    }
+    if (serviceAccount != null) {
+      Preferences.setString(
+          Preferences.serviceAccount, jsonEncode(serviceAccount));
+    }
   }
 
   Future<void> showNotificationCall({required NotificationCall model}) async {
@@ -77,5 +89,20 @@ class McCustomNotification {
 
   Future<dynamic> getAllNotificcations() {
     return McCustomNotificationPlatform.instance.getAllNotificcations();
+  }
+
+  Future<void> sendNotification(
+      {required String token, NotificationModel? model}) async {
+    final projectId = Preferences.getString(Preferences.projectId);
+    final serviceAccount = Preferences.getString(Preferences.serviceAccount);
+    if (projectId.isNotEmpty && serviceAccount.isNotEmpty) {
+      FCMService.sendNotification(
+          serviceAccount: jsonDecode(serviceAccount),
+          projectId: projectId,
+          recipientFCMToken: token,
+          model: model);
+    } else {
+      print("error: you must add id Project of firebase and serviceAccount");
+    }
   }
 }

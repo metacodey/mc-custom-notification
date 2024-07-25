@@ -39,6 +39,24 @@ class NotificationModel {
     );
   }
 
+  factory NotificationModel.fromMap(Map<String, dynamic> map) {
+    return NotificationModel(
+      id: int.parse(map['id'] ?? '0'),
+      tag: map['tag'] != null ? map['tag'] as String : null,
+      title: map['title'] != null ? map['title'] as String : null,
+      body: map['body'] != null ? map['body'] as String : null,
+      image: map['image'] != null ? map['image'] as String : null,
+      payload: map['payload'] != null
+          ? Map<String, dynamic>.from(
+              (jsonDecode(map['payload']) as Map<String, dynamic>))
+          : null,
+      groupKey: map['groupKey'] != null ? map['groupKey'] as String : null,
+    );
+  }
+
+  factory NotificationModel.fromJson(String source) =>
+      NotificationModel.fromMap(json.decode(source) as Map<String, dynamic>);
+
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'id': id,
@@ -51,5 +69,18 @@ class NotificationModel {
     };
   }
 
+  Map<String, dynamic> toMapSend() {
+    return <String, dynamic>{
+      'id': id.toString(),
+      'tag': tag.toString(),
+      'title': title.toString(),
+      'body': body.toString(),
+      'payload': jsonEncode(payload),
+      'image': image.toString(),
+      'groupKey': groupKey.toString(),
+    };
+  }
+
+  String toJsonSend() => json.encode(toMapSend());
   String toJson() => json.encode(toMap());
 }

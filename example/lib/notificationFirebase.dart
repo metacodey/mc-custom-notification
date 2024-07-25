@@ -3,6 +3,7 @@ import 'dart:async';
 import 'dart:developer';
 import 'package:mc_custom_notification/mc_custom_notification.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:mc_custom_notification/models/notification.dart';
 import 'package:mc_custom_notification/models/notification_message.dart';
 
 NotificationService notificationService = NotificationService();
@@ -17,53 +18,39 @@ class NotificationService {
 
   NotificationService._internal();
 
-  Future<void> initPushNotification() async {
+  Future<void> init() async {
     await FirebaseMessaging.instance
         .setForegroundNotificationPresentationOptions(
             alert: true, badge: true, sound: true);
     FirebaseMessaging.instance.getInitialMessage().then(hendleMessage);
     FirebaseMessaging.onMessageOpenedApp.listen(hendleMessage);
     FirebaseMessaging.onMessage.listen((event) {
-      final notification = event.notification;
-      if (notification == null) return;
+      final payload = event.data;
+
+      var model = NotificationModel.fromMap(payload);
       McCustomNotification().showNotificationMessage(
           model: NotificationMessage(
-        id: notification.android.hashCode,
-        body: notification.body,
-        title: notification.title,
-        payload: event.toMap(),
-        tag: notification.android?.tag,
+        id: 1,
+        tag: model.tag,
+        title: model.title,
+        body: model.body,
+        image: model.image,
+        payload: model.payload,
         onRead: (payload) {
-          print("read it from class");
-          print(
-              "---------9999999999999999999999999999999999999999999999999999999");
+          //set here event to read massage
         },
         onReply: (payload) {
-          print("replay it from class");
-          print(
-              "---------9999999999999999999999999999999999999999999999999999999");
+          //set here event to replay massage
         },
       ));
-      // showForegroundNotifications(
-      //     notification.title!, notification.body!, jsonEncode(event.toMap()));
     });
   }
 
   void hendleMessage(RemoteMessage? message) {
     if (message == null) return;
-
-    print(
-        "-----------------------------------------------------------333333333333333333333");
-    print('----------------------------------------------------------4');
-    print('----------------------------------------------------------6');
-    print('----------------------------------------------------------8');
-    print('----------------------------------------------------------7');
-    print('----------------------------------------------------------6');
-    print('----------------------------------------------------------5');
-    // novigatorKey.currentState?.pushNamed(HomeScreen.route, arguments: message);
   }
 
-  Future<String> initializeFirebaseMessaging() async {
+  Future<String> getToken() async {
     try {
       await FirebaseMessaging.instance.requestPermission(
         alert: true,
@@ -77,7 +64,6 @@ class NotificationService {
       await FirebaseMessaging.instance.setAutoInitEnabled(true);
       final fCMToken = await FirebaseMessaging.instance.getToken();
       print('token $fCMToken');
-      print('----------------------------------------------------------2');
 
       return fCMToken ?? "";
     } catch (e) {
@@ -87,29 +73,22 @@ class NotificationService {
 }
 
 Future<void> handeleBachgroundMessage(RemoteMessage message) async {
-  print('Title: ${message.notification?.title}');
-  print('Body: ${message.notification?.body}');
-  print('Payload: ${message.threadId}');
-  print('tag: ${message.notification?.android?.toMap()}');
-  print('senderId: ${message.senderId}');
-  print('messageId: ${message.messageId}');
-  log(message.toMap().toString());
-
-//set tag in notification to cancel notification firebase
+  var payloadData = message.data;
+  log(payloadData.toString());
+  var model = NotificationModel.fromMap(payloadData);
   McCustomNotification().showNotificationMessage(
       model: NotificationMessage(
-    id: 0,
+    id: 1,
     tag: message.notification?.android?.tag,
-    title: 'New Notification',
-    body: 'This is the body of the notification',
-    payload: {'id': 55, "name": "ali"},
+    title: model.title,
+    body: model.body,
+    image: model.image,
+    payload: model.payload,
     onRead: (payload) {
-      print("read it from class");
-      print("---------9999999999999999999999999999999999999999999999999999999");
+      //set here event to read massage
     },
     onReply: (payload) {
-      print("replay it from class");
-      print("---------9999999999999999999999999999999999999999999999999999999");
+      //set here event to replay massage
     },
   ));
 }

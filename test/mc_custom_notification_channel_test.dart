@@ -1,12 +1,9 @@
-import 'package:mc_custom_notification/mc_custom_notification_method_channel.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  MethodChannelMcCustomNotification platform =
-      MethodChannelMcCustomNotification();
   const MethodChannel channel = MethodChannel('costum_notification_call');
 
   setUp(() {
