@@ -100,6 +100,7 @@ class CostumNotificationCallPlugin : FlutterPlugin, MethodCallHandler, ActivityA
                 result.success(null)
             }
             "showNotificationMessage" -> {
+
                 val notificationModel = NotificationModel(
                     id = call.argument("id") ?: 0,
                     tag = call.argument("tag"),
@@ -107,7 +108,8 @@ class CostumNotificationCallPlugin : FlutterPlugin, MethodCallHandler, ActivityA
                     body = call.argument("body"),
                     imageBase64 = call.argument("base64Image"),
                     payload = call.argument("payload"),
-                    groupKey = call.argument("groupKey")
+                    groupKey = call.argument("groupKey"),
+                    useInbox= call.argument<String>("useInbox")=="1"?:true
                 )
                 notificationModel.showNotificationMessage(context!!)
                 result.success(null)
@@ -226,13 +228,30 @@ class CostumNotificationCallPlugin : FlutterPlugin, MethodCallHandler, ActivityA
         override fun onReceive(context: Context?, intent: Intent?) {
             val notificationId = intent?.getIntExtra("notification_id", 0) ?: return
             val tag = intent.getStringExtra("tag")
+            val groupKey = intent.getStringExtra("groupKey")
+            val body = intent.getStringExtra("body")
+            val title = intent.getStringExtra("title")
             val payload = intent.getSerializableExtra("payload") as? HashMap<String, Any>
-            channelMessage.invokeMethod("onReply", mapOf("notification_id" to notificationId, "tag" to tag, "payload" to payload))
+            val useInbox=intent.getBooleanExtra("useInbox",false)
+            channelMessage.invokeMethod("onReply", mapOf("notification_id" to notificationId, "tag" to tag,"groupKey" to groupKey,"body" to  body,"title" to  title,"useInbox" to  useInbox, "payload" to payload))
         }
     }
 
     private val switchMicReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
+            val speakerIcon = getIconSpeaker()
+            if (isMicMute) {
+                isMicMute = false
+                updateNotification(context, intent, speakerIcon, R.drawable.mic)
+            }else{
+                isMicMute = true
+                updateNotification(context, intent, speakerIcon, R.drawable.mic_green)
+            }
+               val notificationId = intent?.getIntExtra("notification_id", 0) ?: return
+            val tag = intent.getStringExtra("tag")
+            val payload = intent.getSerializableExtra("payload") as? HashMap<String, Any>
+           channelCalling.invokeMethod("onMic", mapOf("notification_id" to notificationId, "tag" to tag, "payload" to payload))
+           /*
             if (context != null) {
                 val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
                 audioManager.requestAudioFocus(null, AudioManager.STREAM_VOICE_CALL, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT)
@@ -248,28 +267,42 @@ class CostumNotificationCallPlugin : FlutterPlugin, MethodCallHandler, ActivityA
                     updateNotification(context, intent, speakerIcon, R.drawable.mic_green)
                 }
             }
-            channel.invokeMethod("onMic", isMicMute)
+            */
+            
+            //channel.invokeMethod("onMic", isMicMute)
         }
     }
 
     private val switchSpeakerReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
-            if (context != null) {
-                val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
-                audioManager.requestAudioFocus(null, AudioManager.STREAM_VOICE_CALL, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT)
-                audioManager.mode = AudioManager.MODE_IN_COMMUNICATION
-                val micIcon = getIconMic()
-                if (isSpeaker) {
-                    isSpeaker = false
-                    audioManager.isSpeakerphoneOn = false
-                    updateNotification(context, intent, R.drawable.speaker, micIcon)
-                } else {
-                    isSpeaker = true
-                    audioManager.isSpeakerphoneOn = true
-                    updateNotification(context, intent, R.drawable.speaker_green, micIcon)
-                }
-                channel.invokeMethod("onSpeaker", isSpeaker)
+            val micIcon = getIconMic()
+            if (isSpeaker) {
+                isSpeaker = false
+                updateNotification(context, intent, R.drawable.speaker, micIcon)
+            }else{
+                isSpeaker = true
+                updateNotification(context, intent, R.drawable.speaker_green, micIcon)
             }
+            val notificationId = intent?.getIntExtra("notification_id", 0) ?: return
+            val tag = intent.getStringExtra("tag")
+            val payload = intent.getSerializableExtra("payload") as? HashMap<String, Any>
+            channelCalling.invokeMethod("onSpeaker", mapOf("notification_id" to notificationId, "tag" to tag, "payload" to payload))
+//            if (context != null) {
+//                val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+//                audioManager.requestAudioFocus(null, AudioManager.STREAM_VOICE_CALL, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT)
+//                audioManager.mode = AudioManager.MODE_IN_COMMUNICATION
+//                val micIcon = getIconMic()
+//                if (isSpeaker) {
+//                    isSpeaker = false
+//                    audioManager.isSpeakerphoneOn = false
+//                    updateNotification(context, intent, R.drawable.speaker, micIcon)
+//                } else {
+//                    isSpeaker = true
+//                    audioManager.isSpeakerphoneOn = true
+//                    updateNotification(context, intent, R.drawable.speaker_green, micIcon)
+//                }
+//                channel.invokeMethod("onSpeaker", isSpeaker)
+//            }
         }
     }
 

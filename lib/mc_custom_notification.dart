@@ -59,16 +59,17 @@ class McCustomNotification {
 
   Future<void> showNotificationMessage(
       {required NotificationMessage model}) async {
+    var imageUrl = model.image;
     if (model.image != null && model.image!.isNotEmpty) {
       var imageBytes = await McCustomNotificationPlatform.instance
           .getImageFromUrl(model.image!);
       String? base64Image = base64Encode(imageBytes);
       model = model.copyWith(image: base64Image);
       return McCustomNotificationPlatform.instance
-          .showNotificationMessage(model: model);
+          .showNotificationMessage(model: model, imageUrl: imageUrl);
     } else {
       return McCustomNotificationPlatform.instance
-          .showNotificationMessage(model: model);
+          .showNotificationMessage(model: model, imageUrl: imageUrl);
     }
   }
 

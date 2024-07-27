@@ -4,8 +4,8 @@ import 'notification.dart';
 
 class NotificationMessage extends NotificationModel {
   Function(dynamic payload)? onRead;
-
   Function(dynamic payload)? onReply;
+  bool useInbox;
   NotificationMessage({
     required super.id,
     super.title,
@@ -16,6 +16,7 @@ class NotificationMessage extends NotificationModel {
     super.tag,
     this.onReply,
     this.onRead,
+    this.useInbox = false,
   });
 
   @override
@@ -23,6 +24,7 @@ class NotificationMessage extends NotificationModel {
     Function(dynamic payload)? onReply,
     Function(dynamic payload)? onRead,
     int? id,
+    bool? useInbox,
     String? title,
     String? tag,
     String? body,
@@ -40,6 +42,20 @@ class NotificationMessage extends NotificationModel {
       image: image ?? this.image,
       payload: payload ?? this.payload,
       groupKey: groupKey ?? this.groupKey,
+      useInbox: useInbox ?? this.useInbox,
     );
+  }
+
+  Map<String, dynamic> toMapMsg() {
+    return <String, dynamic>{
+      'id': id,
+      'tag': tag,
+      'title': title,
+      'body': body,
+      'payload': payload,
+      'base64Image': image,
+      'groupKey': groupKey,
+      'useInbox': useInbox ? "1" : "0",
+    };
   }
 }

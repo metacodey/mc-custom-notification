@@ -1,14 +1,16 @@
 package com.mc_custom_notification
 
+import android.app.ActivityManager
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.util.Log
-import androidx.core.app.NotificationManagerCompat
-import android.app.ActivityManager
+import android.graphics.Bitmap
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
+import androidx.core.app.NotificationManagerCompat
 import androidx.core.app.RemoteInput
+
 
 class NotificationReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
@@ -16,9 +18,12 @@ class NotificationReceiver : BroadcastReceiver() {
         val tag = intent.getStringExtra("tag")
         val groupKey = intent.getStringExtra("groupKey")
         val body = intent.getStringExtra("body")
-        val image = intent.getStringExtra("image")
         val title = intent.getStringExtra("title")
         val payload = intent.getSerializableExtra("payload") as? HashMap<String, Any>
+        val useInbox=intent.getBooleanExtra("useInbox",false)
+//        val image = intent.getParcelableExtra("BitmapImage") as Bitmap?;
+
+        //Log.d("useInbox", "useInbox: $useInbox, image:$image---------------------------------1")
        
         when (intent?.action) {
             "com.mc_custom_notification.FULL_SCREEN" -> {
@@ -45,30 +50,11 @@ class NotificationReceiver : BroadcastReceiver() {
                 val remoteInput = RemoteInput.getResultsFromIntent(intent)
                 remoteInput?.getCharSequence("key_text_reply")?.let { inputText ->
                     payload?.put("msg", inputText.toString())                  
-                    sendActionBroadcast(context!!, notificationId, tag, payload, title, body, groupKey, "REPLY_ACTION", false)
-
+                    sendActionBroadcast(context!!, notificationId, tag, payload, title, body, groupKey, "REPLY_ACTION", false,useInbox)
+                    Log.d("useInbox", "useInbox: $useInbox, tag:---------------------------------2")
                 } ?: run {
                     Log.d("NotificationReceiver", "No remote input found")
                 }
-            //     val remoteInput = RemoteInput.getResultsFromIntent(intent)
-            //     if (remoteInput != null) {
-            //         val inputText = remoteInput.getCharSequence("key_text_reply")
-            //         payload["msg"]=inputText
-            //         Log.d("NotificationReceiver", "Reply text: $inputText------------------------------------------------")
-            //         sendActionBroadcast(context!!, notificationId, tag, payload,title,body,groupKey, "REPLY_ACTION",false)
-            //         Log.d("NotificationReceiver", "Accept button clicked for notification ID: $notificationId, payload: $inputText-------------------------------")
-            // NotificationModel(
-            //     notificationId,
-            //     tag,
-            //     title,
-            //     body,
-            //     image,
-            //     payload,
-            //     groupKey
-            // ).showNotificationMessage(context!!)
-            //     } else {
-            //         Log.d("NotificationReceiver", "No remote input found")
-            //     }
 
                }
             "com.mc_custom_notification.READ" -> {
@@ -128,7 +114,7 @@ class NotificationReceiver : BroadcastReceiver() {
         }
     }
 
-    private fun sendActionBroadcast(context: Context, notificationId: Int, tag: String?, payload: HashMap<String, Any>?,title:String?,body:String?,groupKey:String?, action: String,isCalling:Boolean) {
+    private fun sendActionBroadcast(context: Context, notificationId: Int, tag: String?, payload: HashMap<String, Any>?,title:String?,body:String?,groupKey:String?, action: String,isCalling:Boolean,useInbox:Boolean=false,image:Bitmap?=null) {
         val actionIntent = Intent("com.mc_custom_notification.$action").apply {
             putExtra("notification_id", notificationId)
                 putExtra("tag", tag)
@@ -136,9 +122,14 @@ class NotificationReceiver : BroadcastReceiver() {
                 putExtra("body", body)
                 putExtra("groupKey", groupKey)
                 putExtra("payload", payload)
+            putExtra("useInbox", useInbox)
+            if(image!=null){
+                putExtra("image", image)
+            }
         }
         context.sendBroadcast(actionIntent)
-        if(!isCalling){
+        //Log.d("useInbox", "useInbox: $useInbox,Image:$image tag:---------------------------------")
+        if(!isCalling && !useInbox){
         context.let {
             with(NotificationManagerCompat.from(it)) {
                 cancel(tag, notificationId)

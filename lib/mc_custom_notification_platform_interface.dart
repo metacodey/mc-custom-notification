@@ -50,7 +50,7 @@ abstract class McCustomNotificationPlatform extends PlatformInterface {
   }
 
   Future<void> showNotificationMessage(
-      {required NotificationMessage model}) async {
+      {required NotificationMessage model, String? imageUrl}) async {
     throw UnimplementedError(
         'showNotificationMessage() has not been implemented.');
   }
@@ -76,24 +76,28 @@ abstract class McCustomNotificationPlatform extends PlatformInterface {
   }
 
   Future<Uint8List> getImageFromUrl(String imageUrl) async {
-    // Fetch the image from the URL
-    final response = await http.get(Uri.parse(imageUrl));
+    try {
+      // Fetch the image from the URL
+      final response = await http.get(Uri.parse(imageUrl));
 
-    // Check if the request was successful
-    if (response.statusCode == 200) {
-      // Convert the response body to Uint8List
-      Uint8List bytes = response.bodyBytes;
+      // Check if the request was successful
+      if (response.statusCode == 200) {
+        // Convert the response body to Uint8List
+        Uint8List bytes = response.bodyBytes;
 
-      // Optionally, you can process the image using the 'image' package
-      img.Image? image = img.decodeImage(bytes);
-      if (image != null) {
-        // Convert the processed image back to Uint8List
-        Uint8List processedBytes = Uint8List.fromList(img.encodePng(image));
-        return processedBytes;
+        // Optionally, you can process the image using the 'image' package
+        img.Image? image = img.decodeImage(bytes);
+        if (image != null) {
+          // Convert the processed image back to Uint8List
+          Uint8List processedBytes = Uint8List.fromList(img.encodePng(image));
+          return processedBytes;
+        } else {
+          throw Exception("Failed to decode image");
+        }
       } else {
-        throw Exception("Failed to decode image");
+        throw Exception("Failed to load image");
       }
-    } else {
+    } catch (e) {
       throw Exception("Failed to load image");
     }
   }

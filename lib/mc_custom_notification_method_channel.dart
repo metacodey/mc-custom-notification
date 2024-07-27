@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:mc_custom_notification/mc_custom_notification_platform_interface.dart';
 import 'package:mc_custom_notification/models/notification.dart';
 import 'package:mc_custom_notification/models/notification_call.dart';
@@ -44,15 +46,22 @@ class MethodChannelMcCustomNotification extends McCustomNotificationPlatform {
     await methodChannelCalling.invokeMethod<void>(
         'showNotificationCalling', model.toMap());
     methodChannelCalling.setMethodCallHandler(
-      (call) => _handleMethod(call: call, onEndCall: model.onEndCall),
+      (call) => _handleMethod(
+          call: call,
+          onEndCall: model.onEndCall,
+          onMute: model.onMute,
+          onSpeaker: model.onSpeaker),
     );
   }
 
   @override
   Future<void> showNotificationMessage(
-      {required NotificationMessage model}) async {
+      {required NotificationMessage model, String? imageUrl}) async {
+    if (model.useInbox) {
+      model.payload = {"imageUrl": imageUrl, ...model.payload ?? {}};
+    }
     await methodChannelMessage.invokeMethod<void>(
-        'showNotificationMessage', model.toMap());
+        'showNotificationMessage', model.toMapMsg());
     methodChannelMessage.setMethodCallHandler(
       (call) => _handleMethod(
         call: call,
@@ -87,6 +96,29 @@ class MethodChannelMcCustomNotification extends McCustomNotificationPlatform {
     return data;
   }
 
+  Future<void> _onReplayMsg(dynamic payload) async {
+    var imageBytes = await McCustomNotificationPlatform.instance
+        .getImageFromUrl(payload['payload']['imageUrl']);
+    String? base64Image = base64Encode(imageBytes);
+
+    Map<String, dynamic> payloadMap =
+        Map<String, dynamic>.from(payload['payload'] as Map<Object?, Object?>);
+
+    showNotificationMessage(
+      model: NotificationMessage(
+        id: payload['notification_id'] ?? 0,
+        body: payload['payload']['msg'] ?? "",
+        groupKey: payload['groupKey'] ?? "",
+        payload: payloadMap,
+        tag: payload['tag'] ?? "",
+        image: base64Image,
+        title: payload['title'] ?? "",
+        useInbox: payload['useInbox'] ?? false,
+      ),
+      imageUrl: payload['imageUrl'],
+    );
+  }
+
   Future<void> _handleMethod(
       {required MethodCall call,
       Function(dynamic payload)? onClick,
@@ -94,21 +126,35 @@ class MethodChannelMcCustomNotification extends McCustomNotificationPlatform {
       Function(dynamic payload)? onEndCall,
       Function(dynamic payload)? onRead,
       Function(dynamic payload)? onReplay,
+      Function(dynamic payload)? onMute,
+      Function(dynamic payload)? onSpeaker,
       Function()? onDenied}) async {
     switch (call.method) {
       case 'onDecline':
         onDenied!();
+        break;
       case 'onAccept':
         onAccepted!(call.arguments);
+        break;
       case 'onClick':
         onClick!(call.arguments);
+        break;
       case 'onRead':
         onRead!(call.arguments);
+        break;
       case 'onReply':
+        _onReplayMsg(call.arguments);
         onReplay!(call.arguments);
+        break;
 
       case 'onEndCall':
         onEndCall!(call.arguments);
+        break;
+      case 'onMic':
+        onMute!(call.arguments);
+        break;
+      case 'onSpeaker':
+        onSpeaker!(call.arguments);
         break;
 
       default:

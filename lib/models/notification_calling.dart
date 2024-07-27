@@ -4,6 +4,8 @@ import 'notification.dart';
 
 class NotificationCalling extends NotificationModel {
   Function(dynamic payload)? onEndCall;
+  Function(dynamic payload)? onSpeaker;
+  Function(dynamic payload)? onMute;
   NotificationCalling({
     required super.id,
     super.title,
@@ -12,12 +14,16 @@ class NotificationCalling extends NotificationModel {
     super.payload,
     super.groupKey,
     super.tag,
+    this.onMute,
+    this.onSpeaker,
     this.onEndCall,
   });
 
   @override
   NotificationCalling copyWith({
-    Function(dynamic payload)? onAccepted,
+    Function(dynamic payload)? onEndCall,
+    Function(dynamic payload)? onSpeaker,
+    Function(dynamic payload)? onMute,
     int? id,
     String? title,
     String? tag,
@@ -27,14 +33,15 @@ class NotificationCalling extends NotificationModel {
     String? groupKey,
   }) {
     return NotificationCalling(
-      onEndCall: onAccepted ?? this.onEndCall,
-      id: id ?? this.id,
-      title: title ?? this.title,
-      tag: tag ?? this.tag,
-      body: body ?? this.body,
-      image: image ?? this.image,
-      payload: payload ?? this.payload,
-      groupKey: groupKey ?? this.groupKey,
-    );
+        onEndCall: onEndCall ?? this.onEndCall,
+        id: id ?? this.id,
+        title: title ?? this.title,
+        tag: tag ?? this.tag,
+        body: body ?? this.body,
+        image: image ?? this.image,
+        payload: payload ?? this.payload,
+        groupKey: groupKey ?? this.groupKey,
+        onMute: onMute ?? this.onMute,
+        onSpeaker: onSpeaker ?? this.onSpeaker);
   }
 }
