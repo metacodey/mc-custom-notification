@@ -34,7 +34,8 @@ data class NotificationModel(
     val iconCallingSpeaker:Int=R.drawable.speaker,
     val iconCallingMic:Int=R.drawable.mic,
     val isReplay:Boolean=false,
-    val useInbox:Boolean=false
+    val useInbox:Boolean=false,
+    val isVibration:Boolean=true
 ) : Parcelable {
 
     fun decodeBase64ToBitmap(base64Str: String?): Bitmap? {
@@ -103,9 +104,9 @@ private fun createChannelNotification(context: Context,channelId:String,channelN
                   NotificationManager.IMPORTANCE_HIGH
               ).apply {
                   description = "Channel for $channelName"
-                  enableVibration(true)
+                  enableVibration(isVibration)
                   enableLights(true)
-                  vibrationPattern = longArrayOf(0, 1000, 500, 1000)
+                  vibrationPattern = if(isVibration)  longArrayOf(0, 1000, 500, 1000) else   longArrayOf(0L)
                   setSound(soundUri, AudioAttributes.Builder()
                       .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
                       .setUsage(if (ringtoneType == RingtoneManager.TYPE_RINGTONE) AudioAttributes.USAGE_NOTIFICATION_RINGTONE else AudioAttributes.USAGE_NOTIFICATION)
@@ -138,7 +139,7 @@ private fun createChannelNotification(context: Context,channelId:String,channelN
         val acceptPendingIntent = createPendingIntent(context, "ACCEPT")
         val clickPendingIntent = createPendingIntent(context, "CLICK")
         val readPendingIntent = createPendingIntent(context, "READ")
-        val replyPendingIntent = createPendingIntent(context, "REPLY",true)
+        val replyPendingIntent = createPendingIntent(context, "REPLY",useInbox)
         val hidePendingIntent = createPendingIntent(context, "DECLINE")
       
          val replyLabel = "Enter your reply"
@@ -236,6 +237,7 @@ private fun createChannelNotification(context: Context,channelId:String,channelN
     }
 
     private fun createPendingIntent(context: Context, action: String,isReplayMSG:Boolean=false): PendingIntent {
+       // Log.d( "useInbox: ","e:$useInbox---------------------------------33")
         val intent = Intent(context, NotificationReceiver::class.java).apply {
             this.action = "com.mc_custom_notification.$action"
             putExtra("notification_id", id)
@@ -246,7 +248,7 @@ private fun createChannelNotification(context: Context,channelId:String,channelN
             putExtra("payload", HashMap(payload))
             putExtra("useInbox", useInbox)
 //            if(isReplayMSG) {
-//                Log.d( "image: ","e:$imageBase64---------------------------------1")
+              //  Log.d( "useInbox: ","e:$useInbox---------------------------------1")
 //                putExtra("imageBase64", decodeBase64ToBitmap(imageBase64))
 //            }
         }
@@ -305,9 +307,9 @@ private fun createChannelNotification(context: Context,channelId:String,channelN
          }
 
 
-         val clickPendingIntent = notificationModel.createPendingIntent(context, "CLICK")
-         val readPendingIntent = notificationModel.createPendingIntent(context, "READ")
-         val replyPendingIntent = notificationModel.createPendingIntent(context, "REPLY",true)
+         val clickPendingIntent = notificationModel.createPendingIntent(context, "CLICK",notificationModel.useInbox)
+         val readPendingIntent = notificationModel.createPendingIntent(context, "READ",notificationModel.useInbox)
+         val replyPendingIntent = notificationModel.createPendingIntent(context, "REPLY",notificationModel.useInbox)
          val hidePendingIntent = notificationModel.createPendingIntent(context, "DECLINE")
 
          val replyLabel = "Enter your reply"
@@ -340,6 +342,9 @@ private fun createChannelNotification(context: Context,channelId:String,channelN
              .addAction(replyAction)
                  .addAction(readAction)
                  .addAction(hideAction)
+         if(notificationModel.isVibration){
+             builder.setVibrate(longArrayOf(0L))
+         }
 
 
 

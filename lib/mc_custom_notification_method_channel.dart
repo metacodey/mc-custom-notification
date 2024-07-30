@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:mc_custom_notification/mc_custom_notification_platform_interface.dart';
 import 'package:mc_custom_notification/models/notification.dart';
 import 'package:mc_custom_notification/models/notification_call.dart';
@@ -97,26 +96,32 @@ class MethodChannelMcCustomNotification extends McCustomNotificationPlatform {
   }
 
   Future<void> _onReplayMsg(dynamic payload) async {
-    var imageBytes = await McCustomNotificationPlatform.instance
-        .getImageFromUrl(payload['payload']['imageUrl']);
-    String? base64Image = base64Encode(imageBytes);
+    try {
+      String? base64Image;
+      if (payload['payload'].toString().contains("imageUrl")) {
+        var imageBytes = await McCustomNotificationPlatform.instance
+            .getImageFromUrl(payload['payload']['imageUrl']);
+        base64Image = base64Encode(imageBytes);
+      }
 
-    Map<String, dynamic> payloadMap =
-        Map<String, dynamic>.from(payload['payload'] as Map<Object?, Object?>);
-
-    showNotificationMessage(
-      model: NotificationMessage(
-        id: payload['notification_id'] ?? 0,
-        body: payload['payload']['msg'] ?? "",
-        groupKey: payload['groupKey'] ?? "",
-        payload: payloadMap,
-        tag: payload['tag'] ?? "",
-        image: base64Image,
-        title: payload['title'] ?? "",
-        useInbox: payload['useInbox'] ?? false,
-      ),
-      imageUrl: payload['imageUrl'],
-    );
+      Map<String, dynamic> payloadMap = Map<String, dynamic>.from(
+          payload['payload'] as Map<Object?, Object?>);
+      showNotificationMessage(
+        model: NotificationMessage(
+            id: payload['notification_id'] ?? 0,
+            body: payload['payload']['msg'] ?? "",
+            groupKey: payload['groupKey'] ?? "",
+            payload: payloadMap,
+            tag: payload['tag'] ?? "",
+            image: base64Image ?? "",
+            title: payload['title'] ?? "",
+            useInbox: payload['useInbox'] ?? false,
+            isVibration: false),
+        imageUrl: payload['imageUrl'],
+      );
+    } catch (e) {
+      print(e);
+    }
   }
 
   Future<void> _handleMethod(

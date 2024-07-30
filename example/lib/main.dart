@@ -1,6 +1,4 @@
 import 'dart:convert';
-
-import 'package:flutter/services.dart';
 import 'package:mc_custom_notification/models/preferences.dart';
 import 'package:mc_custom_notification/mc_custom_notification.dart';
 import 'package:mc_custom_notification/models/notification.dart';
@@ -76,7 +74,6 @@ class _MyAppState extends State<MyApp> {
                       backgroundColor: Colors.red,
                       textColor: Colors.white,
                       fontSize: 16.0);
-                  print(test);
                 },
               ),
               ElevatedButton(
@@ -139,12 +136,32 @@ class _MyAppState extends State<MyApp> {
                     payload: {'id': 55, "name": "ali"},
                     groupKey: "chat",
                     onRead: (payload) {
-                      print(payload);
                       //set here event to read massage
                     },
                     onReply: (payload) {
-                      print(payload);
-                      print("------------------------------");
+                      //set here event to replay massage
+                    },
+                  ));
+                },
+              ),
+              ElevatedButton(
+                child:
+                    const Text('Show showNotification  Messsage Without Inbox'),
+                onPressed: () async {
+                  _testpluginPlugin.showNotificationMessage(
+                      model: NotificationMessage(
+                    id: 2,
+                    tag: 'tag12',
+                    title: 'Younas Ali Ahmed',
+                    body: 'This is the body of the notification',
+                    image:
+                        "https://vpsserver.meta-code-ye.com/files/image?name=IMG-20240314-WA0007.jpg",
+                    payload: {'id': 55, "name": "ali"},
+                    groupKey: "chat",
+                    onRead: (payload) {
+                      //set here event to read massage
+                    },
+                    onReply: (payload) {
                       //set here event to replay massage
                     },
                   ));
@@ -192,29 +209,16 @@ class _MyAppState extends State<MyApp> {
                 },
                 child: const Text('Send Chat Message'),
               ),
-              ElevatedButton(
-                onPressed: () async {
-                  _sendChatMessage('hello man', 'younas ali', 13, 'chat1');
-                },
-                child: const Text('group Chat Message'),
-              ),
+              // ElevatedButton(
+              //   onPressed: () async {
+              //     _sendChatMessage('hello man', 'younas ali', 13, 'chat1');
+              //   },
+              //   child: const Text('group Chat Message'),
+              // ),
             ],
           ),
         ),
       ),
     );
-  }
-
-  static const platform =
-      MethodChannel('com.example.chat_notification_app/chat');
-
-  Future<void> _sendChatMessage(
-      String text, String sender, int id, String tag) async {
-    try {
-      await platform.invokeMethod('sendChatMessage',
-          {'text': text, 'sender': sender, 'id': id, 'tag': tag});
-    } on PlatformException catch (e) {
-      print("Failed to send chat message: '${e.message}'.");
-    }
   }
 }

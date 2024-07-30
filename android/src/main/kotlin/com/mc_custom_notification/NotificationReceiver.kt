@@ -51,14 +51,14 @@ class NotificationReceiver : BroadcastReceiver() {
                 remoteInput?.getCharSequence("key_text_reply")?.let { inputText ->
                     payload?.put("msg", inputText.toString())                  
                     sendActionBroadcast(context!!, notificationId, tag, payload, title, body, groupKey, "REPLY_ACTION", false,useInbox)
-                    Log.d("useInbox", "useInbox: $useInbox, tag:---------------------------------2")
+
                 } ?: run {
                     Log.d("NotificationReceiver", "No remote input found")
                 }
 
                }
             "com.mc_custom_notification.READ" -> {
-                sendActionBroadcast(context!!, notificationId, tag, payload,title,body,groupKey, "READ_ACTION",false)
+                sendActionBroadcast(context!!, notificationId, tag, payload,title,body,groupKey, "READ_ACTION",false,useInbox)
             }
             "com.mc_custom_notification.ACCEPT" -> {
                 Log.d("NotificationReceiver", "Accept button clicked for notification ID: $notificationId, tag: $tag, payload: $payload")
@@ -70,7 +70,7 @@ class NotificationReceiver : BroadcastReceiver() {
             }
             "com.mc_custom_notification.CLICK" -> {
                 Log.d("NotificationClickReceiver", "Notification clicked for notification ID: $notificationId, tag: $tag, payload: $payload")
-                handleNotificationAction(context!!, notificationId, tag, payload,title,body,groupKey, "CLICK_ACTION",false)
+                handleNotificationAction(context!!, notificationId, tag, payload,title,body,groupKey, "CLICK_ACTION",false,useInbox)
             }
             else -> {
                 Log.d("NotificationReceiver", "Unknown action received: ${intent?.action}")
@@ -78,7 +78,7 @@ class NotificationReceiver : BroadcastReceiver() {
         }
     }
 
-    private fun handleNotificationAction(context: Context, notificationId: Int, tag: String?, payload: HashMap<String, Any>?,title:String?,body:String?,groupKey:String?, action: String,isCalling:Boolean) {
+    private fun handleNotificationAction(context: Context, notificationId: Int, tag: String?, payload: HashMap<String, Any>?,title:String?,body:String?,groupKey:String?, action: String,isCalling:Boolean,useInbox:Boolean=false) {
         if (!isAppRunning(context, context.packageName)) {
             // If the app is not running, start it
             val launchIntent = context.packageManager.getLaunchIntentForPackage(context.packageName)?.apply {
@@ -89,12 +89,13 @@ class NotificationReceiver : BroadcastReceiver() {
                 putExtra("body", body)
                 putExtra("groupKey", groupKey)
                 putExtra("payload", payload)
+                putExtra("useInbox", useInbox)
             }
             context.startActivity(launchIntent)
 
             // Delay the broadcast until the app is opened
             Handler(Looper.getMainLooper()).postDelayed({
-                sendActionBroadcast(context, notificationId, tag, payload,title,body,groupKey, action,false)
+                sendActionBroadcast(context, notificationId, tag, payload,title,body,groupKey, action,false,useInbox)
             }, 3000) // Adjust the delay as needed
         } else {
             // If the app is running but in the background, bring it to the foreground
@@ -106,11 +107,12 @@ class NotificationReceiver : BroadcastReceiver() {
                 putExtra("body", body)
                 putExtra("groupKey", groupKey)
                 putExtra("payload", payload)
+                putExtra("useInbox", useInbox)
             }
             context.startActivity(launchIntent)
 
             // Send the broadcast immediately
-            sendActionBroadcast(context, notificationId, tag, payload,title,body,groupKey, action,isCalling)
+            sendActionBroadcast(context, notificationId, tag, payload,title,body,groupKey, action,isCalling,useInbox)
         }
     }
 

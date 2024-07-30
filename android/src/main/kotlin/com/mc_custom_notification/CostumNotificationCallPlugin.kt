@@ -109,8 +109,11 @@ class CostumNotificationCallPlugin : FlutterPlugin, MethodCallHandler, ActivityA
                     imageBase64 = call.argument("base64Image"),
                     payload = call.argument("payload"),
                     groupKey = call.argument("groupKey"),
-                    useInbox= call.argument<String>("useInbox")=="1"?:true
+                    useInbox= call.argument<String>("useInbox")=="1"?:true,
+                    isVibration= call.argument<String>("isVibration")=="1"?:true
+
                 )
+
                 notificationModel.showNotificationMessage(context!!)
                 result.success(null)
             }
@@ -190,9 +193,12 @@ class CostumNotificationCallPlugin : FlutterPlugin, MethodCallHandler, ActivityA
         override fun onReceive(context: Context?, intent: Intent?) {
             val notificationId = intent?.getIntExtra("notification_id", 0) ?: return
             val tag = intent.getStringExtra("tag")
+            val groupKey = intent.getStringExtra("groupKey")
+            val body = intent.getStringExtra("body")
+            val title = intent.getStringExtra("title")
             val payload = intent.getSerializableExtra("payload") as? HashMap<String, Any>
-           // channel.invokeMethod("onDecline", mapOf("notification_id" to notificationId, "tag" to tag, "payload" to payload))
-            channelCall.invokeMethod("onDecline", mapOf("notification_id" to notificationId, "tag" to tag, "payload" to payload))
+            val useInbox=intent.getBooleanExtra("useInbox",false)
+            channelCall.invokeMethod("onDecline", mapOf("notification_id" to notificationId, "tag" to tag,"groupKey" to groupKey,"body" to  body,"title" to  title,"useInbox" to  useInbox, "payload" to payload))
         }
     }
 
@@ -200,9 +206,12 @@ class CostumNotificationCallPlugin : FlutterPlugin, MethodCallHandler, ActivityA
         override fun onReceive(context: Context?, intent: Intent?) {
             val notificationId = intent?.getIntExtra("notification_id", 0) ?: return
             val tag = intent.getStringExtra("tag")
+            val groupKey = intent.getStringExtra("groupKey")
+            val body = intent.getStringExtra("body")
+            val title = intent.getStringExtra("title")
             val payload = intent.getSerializableExtra("payload") as? HashMap<String, Any>
-           // channel.invokeMethod("onAccept", mapOf("notification_id" to notificationId, "tag" to tag, "payload" to payload))
-            channelCall.invokeMethod("onAccept", mapOf("notification_id" to notificationId, "tag" to tag, "payload" to payload))
+            val useInbox=intent.getBooleanExtra("useInbox",false)
+            channelCall.invokeMethod("onAccept", mapOf("notification_id" to notificationId, "tag" to tag,"groupKey" to groupKey,"body" to  body,"title" to  title,"useInbox" to  useInbox, "payload" to payload))
         }
     }
 
@@ -210,8 +219,12 @@ class CostumNotificationCallPlugin : FlutterPlugin, MethodCallHandler, ActivityA
         override fun onReceive(context: Context?, intent: Intent?) {
             val notificationId = intent?.getIntExtra("notification_id", 0) ?: return
             val tag = intent.getStringExtra("tag")
+            val groupKey = intent.getStringExtra("groupKey")
+            val body = intent.getStringExtra("body")
+            val title = intent.getStringExtra("title")
             val payload = intent.getSerializableExtra("payload") as? HashMap<String, Any>
-            channel.invokeMethod("onClick", mapOf("notification_id" to notificationId, "tag" to tag, "payload" to payload))
+            val useInbox=intent.getBooleanExtra("useInbox",false)
+            channel.invokeMethod("onClick",mapOf("notification_id" to notificationId, "tag" to tag,"groupKey" to groupKey,"body" to  body,"title" to  title,"useInbox" to  useInbox, "payload" to payload))
         }
     }
 
@@ -219,8 +232,12 @@ class CostumNotificationCallPlugin : FlutterPlugin, MethodCallHandler, ActivityA
         override fun onReceive(context: Context?, intent: Intent?) {
             val notificationId = intent?.getIntExtra("notification_id", 0) ?: return
             val tag = intent.getStringExtra("tag")
+            val groupKey = intent.getStringExtra("groupKey")
+            val body = intent.getStringExtra("body")
+            val title = intent.getStringExtra("title")
             val payload = intent.getSerializableExtra("payload") as? HashMap<String, Any>
-            channelMessage.invokeMethod("onRead", mapOf("notification_id" to notificationId, "tag" to tag, "payload" to payload))
+            val useInbox=intent.getBooleanExtra("useInbox",false)
+            channelMessage.invokeMethod("onRead", mapOf("notification_id" to notificationId, "tag" to tag,"groupKey" to groupKey,"body" to  body,"title" to  title,"useInbox" to  useInbox, "payload" to payload))
         }
     }
 
@@ -251,25 +268,7 @@ class CostumNotificationCallPlugin : FlutterPlugin, MethodCallHandler, ActivityA
             val tag = intent.getStringExtra("tag")
             val payload = intent.getSerializableExtra("payload") as? HashMap<String, Any>
            channelCalling.invokeMethod("onMic", mapOf("notification_id" to notificationId, "tag" to tag, "payload" to payload))
-           /*
-            if (context != null) {
-                val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
-                audioManager.requestAudioFocus(null, AudioManager.STREAM_VOICE_CALL, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT)
-                audioManager.mode = AudioManager.MODE_IN_COMMUNICATION
-                val speakerIcon = getIconSpeaker()
-                if (isMicMute) {
-                    isMicMute = false
-                    audioManager.isMicrophoneMute = false
-                    updateNotification(context, intent, speakerIcon, R.drawable.mic)
-                } else {
-                    isMicMute = true
-                    audioManager.isMicrophoneMute = true
-                    updateNotification(context, intent, speakerIcon, R.drawable.mic_green)
-                }
-            }
-            */
-            
-            //channel.invokeMethod("onMic", isMicMute)
+
         }
     }
 
@@ -287,22 +286,7 @@ class CostumNotificationCallPlugin : FlutterPlugin, MethodCallHandler, ActivityA
             val tag = intent.getStringExtra("tag")
             val payload = intent.getSerializableExtra("payload") as? HashMap<String, Any>
             channelCalling.invokeMethod("onSpeaker", mapOf("notification_id" to notificationId, "tag" to tag, "payload" to payload))
-//            if (context != null) {
-//                val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
-//                audioManager.requestAudioFocus(null, AudioManager.STREAM_VOICE_CALL, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT)
-//                audioManager.mode = AudioManager.MODE_IN_COMMUNICATION
-//                val micIcon = getIconMic()
-//                if (isSpeaker) {
-//                    isSpeaker = false
-//                    audioManager.isSpeakerphoneOn = false
-//                    updateNotification(context, intent, R.drawable.speaker, micIcon)
-//                } else {
-//                    isSpeaker = true
-//                    audioManager.isSpeakerphoneOn = true
-//                    updateNotification(context, intent, R.drawable.speaker_green, micIcon)
-//                }
-//                channel.invokeMethod("onSpeaker", isSpeaker)
-//            }
+
         }
     }
 
@@ -327,10 +311,12 @@ class CostumNotificationCallPlugin : FlutterPlugin, MethodCallHandler, ActivityA
             if (context != null) {
                 val notificationId = intent?.getIntExtra("notification_id", 0) ?: return
                 val tag = intent.getStringExtra("tag")
+                val groupKey = intent.getStringExtra("groupKey")
+                val body = intent.getStringExtra("body")
+                val title = intent.getStringExtra("title")
                 val payload = intent.getSerializableExtra("payload") as? HashMap<String, Any>
-                val notificationModel = NotificationModel(notificationId, tag, null, null, null, null, null)
-                notificationModel.cancel(context!!)
-                channelCalling.invokeMethod("onEndCall", mapOf("notification_id" to notificationId, "tag" to tag, "payload" to payload))
+                val useInbox=intent.getBooleanExtra("useInbox",false)
+                channelCalling.invokeMethod("onEndCall", mapOf("notification_id" to notificationId, "tag" to tag,"groupKey" to groupKey,"body" to  body,"title" to  title,"useInbox" to  useInbox, "payload" to payload))
                 //channelTest.invokeMethod("onEndCall", mapOf("notification_id" to notificationId, "tag" to tag, "payload" to payload))
             }
         }

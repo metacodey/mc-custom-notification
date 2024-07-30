@@ -6,6 +6,7 @@ import 'package:mc_custom_notification/models/notification_call.dart';
 import 'package:mc_custom_notification/models/notification_calling.dart';
 import 'package:mc_custom_notification/models/notification_message.dart';
 import 'package:mc_custom_notification/models/preferences.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import 'models/send_notification.dart';
 
@@ -14,6 +15,7 @@ class McCustomNotification {
       {Function(dynamic payload)? onClick,
       String? projectId,
       Map<String, dynamic>? serviceAccount}) async {
+    _premission();
     McCustomNotificationPlatform.instance.initialize(
       onClick: onClick,
     );
@@ -60,6 +62,7 @@ class McCustomNotification {
   Future<void> showNotificationMessage(
       {required NotificationMessage model}) async {
     var imageUrl = model.image;
+    
     if (model.image != null && model.image!.isNotEmpty) {
       var imageBytes = await McCustomNotificationPlatform.instance
           .getImageFromUrl(model.image!);
@@ -105,5 +108,10 @@ class McCustomNotification {
     } else {
       print("error: you must add id Project of firebase and serviceAccount");
     }
+  }
+
+  Future<void> _premission() async {
+    await Permission.notification.request();
+    await Permission.accessNotificationPolicy.request();
   }
 }

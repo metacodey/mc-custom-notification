@@ -5,6 +5,7 @@ import 'notification.dart';
 class NotificationMessage extends NotificationModel {
   Function(dynamic payload)? onRead;
   Function(dynamic payload)? onReply;
+  bool isVibration;
   bool useInbox;
   NotificationMessage({
     required super.id,
@@ -17,12 +18,14 @@ class NotificationMessage extends NotificationModel {
     this.onReply,
     this.onRead,
     this.useInbox = false,
+    this.isVibration = false,
   });
 
   @override
   NotificationMessage copyWith({
     Function(dynamic payload)? onReply,
     Function(dynamic payload)? onRead,
+    bool? isVibration,
     int? id,
     bool? useInbox,
     String? title,
@@ -43,6 +46,7 @@ class NotificationMessage extends NotificationModel {
       payload: payload ?? this.payload,
       groupKey: groupKey ?? this.groupKey,
       useInbox: useInbox ?? this.useInbox,
+      isVibration: isVibration ?? this.isVibration,
     );
   }
 
@@ -56,6 +60,7 @@ class NotificationMessage extends NotificationModel {
       'base64Image': image,
       'groupKey': groupKey,
       'useInbox': useInbox ? "1" : "0",
+      'isVibration': isVibration ? "1" : "0",
     };
   }
 }

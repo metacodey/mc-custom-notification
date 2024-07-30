@@ -26,16 +26,18 @@ class NotificationService {
     FirebaseMessaging.onMessageOpenedApp.listen(hendleMessage);
     FirebaseMessaging.onMessage.listen((event) {
       final payload = event.data;
-
+      print('payload: $payload');
       var model = NotificationModel.fromMap(payload);
       McCustomNotification().showNotificationMessage(
           model: NotificationMessage(
-        id: 1,
+        id: 6,
         tag: model.tag,
         title: model.title,
         body: model.body,
         image: model.image,
         payload: model.payload,
+        groupKey: model.groupKey,
+        useInbox: true,
         onRead: (payload) {
           //set here event to read massage
         },
@@ -78,12 +80,14 @@ Future<void> handeleBachgroundMessage(RemoteMessage message) async {
   var model = NotificationModel.fromMap(payloadData);
   McCustomNotification().showNotificationMessage(
       model: NotificationMessage(
-    id: 1,
-    tag: message.notification?.android?.tag,
+    id: 5,
+    tag: model.tag,
     title: model.title,
     body: model.body,
     image: model.image,
     payload: model.payload,
+    groupKey: model.groupKey,
+    useInbox: true,
     onRead: (payload) {
       //set here event to read massage
     },

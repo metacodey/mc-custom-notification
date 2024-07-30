@@ -32,6 +32,7 @@ class FCMService {
       required String recipientFCMToken,
       NotificationModel? model}) async {
     final String accessToken = await _getAccessToken(serviceAccount);
+    print(accessToken);
 
     String fcmEndpoint = "https://fcm.googleapis.com/v1/projects/$projectId";
     final url = Uri.parse('$fcmEndpoint/messages:send');
