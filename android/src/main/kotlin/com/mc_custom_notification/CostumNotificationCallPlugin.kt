@@ -12,6 +12,7 @@ import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
 import android.content.IntentFilter
 import android.media.AudioManager
+import android.util.Log
 import androidx.lifecycle.LifecycleObserver
 import android.app.Application
 import android.os.Bundle
@@ -161,6 +162,7 @@ class CostumNotificationCallPlugin : FlutterPlugin, MethodCallHandler, ActivityA
         context?.registerReceiver(switchMicReceiver, IntentFilter("com.mc_custom_notification.MIC_CALL_ACTION"))
         context?.registerReceiver(switchSpeakerReceiver, IntentFilter("com.mc_custom_notification.SPEAKER_ACTION"))
         context?.registerReceiver(endCallingReceiver, IntentFilter("com.mc_custom_notification.END_CALLING_ACTION"))
+        context?.registerReceiver(deleteNotification, IntentFilter("com.mc_custom_notification.DELETE_ACTION"))
     }
 
     private fun unregisterReceivers(context: Context?) {
@@ -172,6 +174,7 @@ class CostumNotificationCallPlugin : FlutterPlugin, MethodCallHandler, ActivityA
         context?.unregisterReceiver(switchMicReceiver)
         context?.unregisterReceiver(switchSpeakerReceiver)
         context?.unregisterReceiver(endCallingReceiver)
+        context?.unregisterReceiver(deleteNotification)
     }
 
     private val activityLifecycleCallbacks = object : Application.ActivityLifecycleCallbacks {
@@ -186,6 +189,21 @@ class CostumNotificationCallPlugin : FlutterPlugin, MethodCallHandler, ActivityA
             if (context != null) {
                 NotificationModel(idNoti, tagNoti, null, null, null, null, null).cancel(context!!)
             }
+        }
+    }
+
+    private val deleteNotification = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            val notificationId = intent?.getIntExtra("notification_id", 0) ?: return
+            val tag = intent.getStringExtra("tag")
+            val groupKey = intent.getStringExtra("groupKey")
+            val body = intent.getStringExtra("body")
+            val title = intent.getStringExtra("title")
+            val payload = intent.getSerializableExtra("payload") as? HashMap<String, Any>
+            val useInbox=intent.getBooleanExtra("useInbox",false)
+           var model= NotificationModel(notificationId, tag, title, body, null, payload, groupKey, useInbox = useInbox)
+        model.removeNoit(title?:"")
+
         }
     }
 
@@ -240,6 +258,7 @@ class CostumNotificationCallPlugin : FlutterPlugin, MethodCallHandler, ActivityA
             channelMessage.invokeMethod("onRead", mapOf("notification_id" to notificationId, "tag" to tag,"groupKey" to groupKey,"body" to  body,"title" to  title,"useInbox" to  useInbox, "payload" to payload))
         }
     }
+
 
     private val replyReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {

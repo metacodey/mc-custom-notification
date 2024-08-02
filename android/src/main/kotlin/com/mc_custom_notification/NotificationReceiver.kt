@@ -29,9 +29,14 @@ class NotificationReceiver : BroadcastReceiver() {
             "com.mc_custom_notification.FULL_SCREEN" -> {
                 // Handle full-screen intent action
             }
+            "com.mc_custom_notification.DELETE_NOTI" -> {
+                Log.d("NotificationReceiver", "DELETE_ACTION button clicked for notification ID: $notificationId")
+                sendActionBroadcast(context!!, notificationId, tag, payload,title,body,groupKey, "DELETE_ACTION",false,useInbox)
+
+            }
             "com.mc_custom_notification.END_CALLING" -> {
                 Log.d("NotificationReceiver", "END_CALLING_ACTION button clicked for notification ID: $notificationId, tag: $tag, payload: $payload")
-                sendActionBroadcast(context!!, notificationId, tag, payload,title,body,groupKey, "END_CALLING_ACTION",true)
+                sendActionBroadcast(context!!, notificationId, tag, payload,title,body,groupKey, "END_CALLING_ACTION",false)
 
             }
             "com.mc_custom_notification.SPEAKER" -> {
@@ -50,7 +55,7 @@ class NotificationReceiver : BroadcastReceiver() {
                 val remoteInput = RemoteInput.getResultsFromIntent(intent)
                 remoteInput?.getCharSequence("key_text_reply")?.let { inputText ->
                     payload?.put("msg", inputText.toString())                  
-                    sendActionBroadcast(context!!, notificationId, tag, payload, title, body, groupKey, "REPLY_ACTION", false,useInbox)
+                    sendActionBroadcast(context!!, notificationId, tag, payload, title, body, groupKey, "REPLY_ACTION", true,useInbox)
 
                 } ?: run {
                     Log.d("NotificationReceiver", "No remote input found")
@@ -131,7 +136,7 @@ class NotificationReceiver : BroadcastReceiver() {
         }
         context.sendBroadcast(actionIntent)
         //Log.d("useInbox", "useInbox: $useInbox,Image:$image tag:---------------------------------")
-        if(!isCalling && !useInbox){
+        if(!isCalling){
         context.let {
             with(NotificationManagerCompat.from(it)) {
                 cancel(tag, notificationId)

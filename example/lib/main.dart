@@ -124,17 +124,56 @@ class _MyAppState extends State<MyApp> {
               ElevatedButton(
                 child: const Text('Show showNotification Messsage'),
                 onPressed: () async {
-                  _testpluginPlugin.showNotificationMessage(
+                  await _testpluginPlugin.showNotificationMessage(
                       model: NotificationMessage(
                     useInbox: true,
-                    id: 2,
-                    tag: 'tag12',
+                    id: 555,
+                    tag: 'tag555',
                     title: 'Younas Ali Ahmed',
                     body: 'This is the body of the notification',
                     image:
                         "https://vpsserver.meta-code-ye.com/files/image?name=IMG-20240314-WA0007.jpg",
                     payload: {'id': 55, "name": "ali"},
                     groupKey: "chat",
+                    isVibration: true,
+                    onRead: (payload) {
+                      //set here event to read massage
+                    },
+                    onReply: (payload) {
+                      //set here event to replay massage
+                    },
+                  ));
+                  await _testpluginPlugin.showNotificationMessage(
+                      model: NotificationMessage(
+                    useInbox: true,
+                    id: 555,
+                    tag: 'tag555',
+                    title: 'Mohmmed Mohmmed',
+                    body: 'This is the body of the notification',
+                    image:
+                        "https://vpsserver.meta-code-ye.com/files/image?name=IMG-20240314-WA0007.jpg",
+                    payload: {'id': 55, "name": "ali"},
+                    groupKey: "chat",
+                    isVibration: true,
+                    onRead: (payload) {
+                      //set here event to read massage
+                    },
+                    onReply: (payload) {
+                      //set here event to replay massage
+                    },
+                  ));
+                  await _testpluginPlugin.showNotificationMessage(
+                      model: NotificationMessage(
+                    useInbox: true,
+                    id: 555,
+                    tag: 'tag555',
+                    title: 'Salh Salh',
+                    body: 'This is the body of the notification',
+                    image:
+                        "https://vpsserver.meta-code-ye.com/files/image?name=IMG-20240314-WA0007.jpg",
+                    payload: {'id': 55, "name": "ali"},
+                    groupKey: "chat",
+                    isVibration: true,
                     onRead: (payload) {
                       //set here event to read massage
                     },

@@ -24,6 +24,7 @@
         <action android:name="com.mc_custom_notification.MIC_CALL_ACTION"/>
         <action android:name="com.mc_custom_notification.SPEAKER_ACTION"/>
         <action android:name="com.mc_custom_notification.END_CALLING_ACTION"/>
+        <action android:name="com.mc_custom_notification.DELETE_ACTION"/>
     </intent-filter>
 </receiver>
 

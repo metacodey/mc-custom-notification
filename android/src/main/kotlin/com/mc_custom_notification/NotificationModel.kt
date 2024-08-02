@@ -46,17 +46,10 @@ data class NotificationModel(
             null
         }
     }
-
-//    fun decodeBase64ToBitmap(): Bitmap? {
-//        return imageBase64?.let {
-//            val decodedBytes = Base64.decode(it, Base64.DEFAULT)
-//            BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size)
-//        }
-//    }
-
     fun showNotificationCall(context: Context) {
         showNotification(context, R.layout.notification_layout_call, RingtoneManager.TYPE_RINGTONE, false, true,false)
     }
+
 
     fun showNotificationMessage(context: Context) {
         if(useInbox){
@@ -286,16 +279,28 @@ private fun createChannelNotification(context: Context,channelId:String,channelN
         val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.cancelAll()
     }
+    fun removeNoit(title: String) {
+        removeNotificationByTitle(title)
+    }
  companion object {
      ///start group
      private val messages = mutableListOf<NotificationCompat.MessagingStyle.Message>()
      fun addChatMessage(context: Context, notificationModel: NotificationModel) {
          val bitmap = notificationModel.decodeBase64ToBitmap(notificationModel.imageBase64 ?: "")
          val person = createPerson(notificationModel.title?:"", bitmap)
-         notificationModel.createChannelNotification(context,"message_notification_channel_id","Message Channel",RingtoneManager.TYPE_NOTIFICATION,false)
+         notificationModel.createChannelNotification(context,"message_notification_channel${notificationModel.isVibration}","Message Channel Notifcation",RingtoneManager.TYPE_NOTIFICATION,false)
          val message = NotificationCompat.MessagingStyle.Message(notificationModel.body, System.currentTimeMillis(), person)
          messages.add(message)
          displayNotification(context,notificationModel)
+     }
+     fun clearMessages() {
+         messages.clear()
+         Log.d("NotificationClear", "All messages have been cleared.")
+     }
+     fun removeNotificationByTitle(title: String) {
+         messages.removeAll { it.person?.name == title }
+         Log.d("NotificationDelete", "Removed messages with title: $title")
+         Log.d("NotificationDelete", "Remaining messages: $messages")
      }
 
      private fun displayNotification(context: Context,notificationModel: NotificationModel) {
@@ -306,7 +311,7 @@ private fun createChannelNotification(context: Context,channelId:String,channelN
              messagingStyle.addMessage(message)
          }
 
-
+         val deletePendingIntent =notificationModel.createPendingIntent(context, "DELETE_NOTI",notificationModel.useInbox)
          val clickPendingIntent = notificationModel.createPendingIntent(context, "CLICK",notificationModel.useInbox)
          val readPendingIntent = notificationModel.createPendingIntent(context, "READ",notificationModel.useInbox)
          val replyPendingIntent = notificationModel.createPendingIntent(context, "REPLY",notificationModel.useInbox)
@@ -333,12 +338,13 @@ private fun createChannelNotification(context: Context,channelId:String,channelN
              .build()
 
 
-         val builder = NotificationCompat.Builder(context, "message_notification_channel_id")
+         val builder = NotificationCompat.Builder(context, "message_notification_channel${notificationModel.isVibration}")
              .setSmallIcon(smallIconResId)
              .setPriority(NotificationCompat.PRIORITY_MAX)
              .setStyle(messagingStyle)
              .setContentIntent(clickPendingIntent)
              .setGroup(notificationModel.groupKey)
+             .setDeleteIntent(deletePendingIntent) // Set the delete intent
              .addAction(replyAction)
                  .addAction(readAction)
                  .addAction(hideAction)

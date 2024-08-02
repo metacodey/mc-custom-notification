@@ -16,6 +16,7 @@ Custom notifications, call notifications, message notifications, calling notific
 <img src="https://meta-code-ye.com/images/image/2.jpg" width="200" style="margin-right: 10px;" />
 <img src="https://meta-code-ye.com/images/image/3.jpg" width="200" style="margin-right: 10px;" />
 <img src="https://meta-code-ye.com/images/image/4.jpg" width="200" style="margin-right: 10px;" />
+<img src="https://meta-code-ye.com/images/image/5.jpg" width="200" style="margin-right: 10px;" />
 ]
 
 
@@ -31,28 +32,35 @@ Custom notifications, call notifications, message notifications, calling notific
 
 1. Show incoming call notification Event to answer Event to reject
 2. Notification of an ongoing call Call end event Microphone on event Call mute event
-3. Notification message with a reply event, a read event, and a hide event
-4. Regular notification with notification click event
-5. Cancel all notifications
-6. Cancel a specific notification
-7. Get all notifications
-8. Sending notifications using Firebase.
-9. All notices contain the title of the notice, the image of the notice, the body of the notice, the payload of the notice, the hands of the notice, and the tag of the notice
-10. You can use Firebase to receive notifications in the foreground and background without Firebase notifications appearing
-11. When you click on the notification, if the application is closed, it opens it, and if it is running in the background, it opens it as well.
+3. Notification message With InBox like Whatsapp with a reply event, a read event, and a hide event
+4. Notification message with a reply event, a read event, and a hide event
+5. Regular notification with notification click event
+6. Cancel all notifications
+7. Cancel a specific notification
+8. Get all notifications
+9. Sending notifications using Firebase.
+10. All notices contain the title of the notice, the image of the notice, the body of the notice, the payload of the notice, the hands of the notice, and the tag of the notice
+11. You can use Firebase to receive notifications in the foreground and background without Firebase notifications appearing
+12. When you click on the notification, if the application is closed, it opens it, and if it is running in the background, it opens it as well.
 
 
 ## Installation
+
 
 ```sh
 flutter pub add mc_custom_notification
 ```
 
-## Example
+
+## Usage
 
 
 ## Initializing Library
+
+
 start with Initializing mc_custom_notification
+
+
 ```dart
 import 'package:mc_custom_notification/mc_custom_notification.dart';
 
@@ -70,7 +78,11 @@ Future<void> main() async {
 
 ```
 
+
+
 Here's a quick example that shows how to use a `NotificationCall` in your app
+
+
 
 ```dart
 import 'package:mc_custom_notification/models/notification_call.dart';
@@ -123,7 +135,78 @@ import 'package:mc_custom_notification/models/notification_calling.dart';
 
 
 
-Here's a quick example that shows how to use a `NotificationMessage` in your app
+
+
+Here's a quick example that shows how to use a `NotificationMessageWithInBox` in your app
+
+
+
+```dart
+    import 'package:mc_custom_notification/models/notification_message.dart';
+
+                   await _testpluginPlugin.showNotificationMessage(
+                      model: NotificationMessage(
+                    useInbox: true,
+                    id: 555,
+                    tag: 'tag555',
+                    title: 'Younas Ali Ahmed',
+                    body: 'This is the body of the notification',
+                    image:
+                        "https://vpsserver.meta-code-ye.com/files/image?name=IMG-20240314-WA0007.jpg",
+                    payload: {'id': 55, "name": "ali"},
+                    groupKey: "chat",
+                    isVibration: true,
+                    onRead: (payload) {
+                      //set here event to read massage
+                    },
+                    onReply: (payload) {
+                      //set here event to replay massage
+                    },
+                  ));
+                  await _testpluginPlugin.showNotificationMessage(
+                      model: NotificationMessage(
+                    useInbox: true,
+                    id: 555,
+                    tag: 'tag555',
+                    title: 'Mohmmed Mohmmed',
+                    body: 'This is the body of the notification',
+                    image:
+                        "https://vpsserver.meta-code-ye.com/files/image?name=IMG-20240314-WA0007.jpg",
+                    payload: {'id': 55, "name": "ali"},
+                    groupKey: "chat",
+                    isVibration: true,
+                    onRead: (payload) {
+                      //set here event to read massage
+                    },
+                    onReply: (payload) {
+                      //set here event to replay massage
+                    },
+                  ));
+                  await _testpluginPlugin.showNotificationMessage(
+                      model: NotificationMessage(
+                    useInbox: true,
+                    id: 555,
+                    tag: 'tag555',
+                    title: 'Salh Salh',
+                    body: 'This is the body of the notification',
+                    image:
+                        "https://vpsserver.meta-code-ye.com/files/image?name=IMG-20240314-WA0007.jpg",
+                    payload: {'id': 55, "name": "ali"},
+                    groupKey: "chat",
+                    isVibration: true,
+                    onRead: (payload) {
+                      //set here event to read massage
+                    },
+                    onReply: (payload) {
+                      //set here event to replay massage
+                    },
+                  ));
+
+```
+
+
+
+Here's a quick example that shows how to use a `NotificationMessageWithOutInBox` in your app
 
 
 
@@ -168,8 +251,7 @@ Here's a quick example that shows how to use a `Send Notification With Firebase`
   );
 
 
-
-McCustomNotification.sendNotification(
+                  McCustomNotification.sendNotification(
                       token: token,
                       model: NotificationModel(
                         title: "younas ali",
