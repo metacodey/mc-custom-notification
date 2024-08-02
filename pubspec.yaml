@@ -1,6 +1,6 @@
 name: mc_custom_notification
 description: Custom notifications, call notifications, message notifications, call notifications, regular notifications, Firebase notifications.
-version: 0.0.2
+version: 0.0.3
 homepage: https://github.com/metacodey/mc-custom-notification.git
 
 environment:
