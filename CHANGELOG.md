@@ -10,3 +10,8 @@
 ## 0.0.3
 
 * add  Messages Notifications like Whatsapp 
+
+
+## 0.0.4
+
+* Fix Provide documentation

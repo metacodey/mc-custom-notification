@@ -2,11 +2,31 @@
 
 import 'notification.dart';
 
+/// A model representing a notification for a message.
+///
+/// [NotificationMessage] extends [NotificationModel] and includes additional
+/// functionality for handling message-related actions such as reading and replying.
+/// It also provides options for using inbox-style notifications and enabling vibration.
 class NotificationMessage extends NotificationModel {
+  /// A callback function triggered when the message is read.
   Function(dynamic payload)? onRead;
+
+  /// A callback function triggered when the user replies to the message.
   Function(dynamic payload)? onReply;
+
+  /// Indicates whether vibration should be enabled for the notification.
   bool isVibration;
+
+  /// Indicates whether the inbox style should be used for the notification.
   bool useInbox;
+
+  /// Constructs a [NotificationMessage] object.
+  ///
+  /// [id] is required and represents the unique identifier for the notification.
+  /// [title], [body], [image], [payload], [groupKey], and [tag] are optional parameters
+  /// that provide additional details about the notification.
+  /// [onReply] and [onRead] are optional callbacks for handling actions related to the message.
+  /// [useInbox] and [isVibration] are optional boolean values that control the notification style and behavior.
   NotificationMessage({
     required super.id,
     super.title,
@@ -21,6 +41,11 @@ class NotificationMessage extends NotificationModel {
     this.isVibration = false,
   });
 
+  /// Creates a copy of the current [NotificationMessage] instance with modified properties.
+  ///
+  /// Any of the properties [onReply], [onRead], [isVibration], [id], [useInbox], [title], [tag],
+  /// [body], [image], [payload], and [groupKey] can be updated in the new copy. If a property
+  /// is not provided, the original value from this instance is retained.
   @override
   NotificationMessage copyWith({
     Function(dynamic payload)? onReply,
@@ -50,6 +75,9 @@ class NotificationMessage extends NotificationModel {
     );
   }
 
+  /// Converts the [NotificationMessage] object into a map.
+  ///
+  /// This is useful for serializing the notification data before sending it to the native platform.
   Map<String, dynamic> toMapMsg() {
     return <String, dynamic>{
       'id': id,

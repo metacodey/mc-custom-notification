@@ -7,7 +7,8 @@ import 'package:mc_custom_notification/models/notification_message.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
-/// An implementation of [McCustomNotificationPlatform] that uses method channels.
+/// An implementation of [McCustomNotificationPlatform] that uses method channels
+/// to communicate with the native platform for handling notifications.
 class MethodChannelMcCustomNotification extends McCustomNotificationPlatform {
   /// The method channel used to interact with the native platform.
   @visibleForTesting
@@ -28,6 +29,9 @@ class MethodChannelMcCustomNotification extends McCustomNotificationPlatform {
     );
   }
 
+  /// Displays a call notification using the provided [NotificationCall] model.
+  ///
+  /// [model] contains the details of the call notification.
   @override
   Future<void> showNotificationCall({required NotificationCall model}) async {
     await methodChannelCall.invokeMethod<void>(
@@ -38,6 +42,9 @@ class MethodChannelMcCustomNotification extends McCustomNotificationPlatform {
     );
   }
 
+  /// Displays an ongoing call notification using the provided [NotificationCalling] model.
+  ///
+  /// [model] contains the details of the ongoing call notification.
   @override
   Future<void> showNotificationCalling(
       {required NotificationCalling model}) async {
@@ -53,6 +60,10 @@ class MethodChannelMcCustomNotification extends McCustomNotificationPlatform {
     );
   }
 
+  /// Displays a message notification using the provided [NotificationMessage] model.
+  ///
+  /// [model] contains the details of the message notification.
+  /// [imageUrl] is the URL of the image associated with the notification.
   @override
   Future<void> showNotificationMessage(
       {required NotificationMessage model, String? imageUrl}) async {
@@ -70,6 +81,9 @@ class MethodChannelMcCustomNotification extends McCustomNotificationPlatform {
     );
   }
 
+  /// Displays a normal notification using the provided [NotificationModel].
+  ///
+  /// [model] contains the details of the normal notification.
   @override
   Future<void> showNotificationNormal(
       {required NotificationModel model}) async {
@@ -77,17 +91,23 @@ class MethodChannelMcCustomNotification extends McCustomNotificationPlatform {
         'showNotificationNormal', model.toMap());
   }
 
+  /// Cancels a specific notification based on the provided [id] and optional [tag].
+  ///
+  /// [id] is the identifier of the notification to be canceled.
+  /// [tag] is an optional tag used to identify the notification.
   @override
   Future<void> cancelNotification({required int id, String? tag}) async {
     await methodChannel
         .invokeMethod<void>('cancelNotification', {'id': id, 'tag': tag});
   }
 
+  /// Cancels all currently active notifications.
   @override
   Future<void> cancelAllNotifications() async {
     await methodChannel.invokeMethod<void>('cancelAllNotification');
   }
 
+  /// Retrieves all currently active notifications from the native platform.
   @override
   Future<dynamic> getAllNotificcations() async {
     final data =
@@ -95,6 +115,9 @@ class MethodChannelMcCustomNotification extends McCustomNotificationPlatform {
     return data;
   }
 
+  /// Handles replying to a message notification.
+  ///
+  /// [payload] contains the data required to construct and display the reply notification.
   Future<void> _onReplayMsg(dynamic payload) async {
     try {
       String? base64Image;
@@ -124,6 +147,11 @@ class MethodChannelMcCustomNotification extends McCustomNotificationPlatform {
     }
   }
 
+  /// Handles method calls from the native platform.
+  ///
+  /// [call] is the method call from the native platform.
+  /// [onClick], [onAccepted], [onEndCall], [onRead], [onReplay], [onMute], [onSpeaker], and [onDenied]
+  /// are optional callbacks for handling specific events triggered by the notifications.
   Future<void> _handleMethod(
       {required MethodCall call,
       Function(dynamic payload)? onClick,
@@ -151,7 +179,6 @@ class MethodChannelMcCustomNotification extends McCustomNotificationPlatform {
         _onReplayMsg(call.arguments);
         onReplay!(call.arguments);
         break;
-
       case 'onEndCall':
         onEndCall!(call.arguments);
         break;
@@ -161,7 +188,6 @@ class MethodChannelMcCustomNotification extends McCustomNotificationPlatform {
       case 'onSpeaker':
         onSpeaker!(call.arguments);
         break;
-
       default:
         print('Unknown method ${call.method}');
     }
