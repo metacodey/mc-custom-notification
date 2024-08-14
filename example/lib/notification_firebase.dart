@@ -1,10 +1,8 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:async';
 import 'dart:developer';
-import 'package:mc_custom_notification/mc_custom_notification.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:mc_custom_notification/models/notification.dart';
-import 'package:mc_custom_notification/models/notification_message.dart';
+import 'package:mc_custom_notification/mc_custom_notification.dart';
 
 NotificationService notificationService = NotificationService();
 
@@ -26,7 +24,7 @@ class NotificationService {
     FirebaseMessaging.onMessageOpenedApp.listen(hendleMessage);
     FirebaseMessaging.onMessage.listen((event) {
       final payload = event.data;
-      print('payload: $payload');
+      log('payload: $payload');
       var model = NotificationModel.fromMap(payload);
       McCustomNotification().showNotificationMessage(
           model: NotificationMessage(
@@ -65,7 +63,7 @@ class NotificationService {
       );
       await FirebaseMessaging.instance.setAutoInitEnabled(true);
       final fCMToken = await FirebaseMessaging.instance.getToken();
-      print('token $fCMToken');
+      log('token $fCMToken');
 
       return fCMToken ?? "";
     } catch (e) {

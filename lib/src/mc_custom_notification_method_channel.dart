@@ -1,9 +1,10 @@
 import 'dart:convert';
-import 'package:mc_custom_notification/mc_custom_notification_platform_interface.dart';
-import 'package:mc_custom_notification/models/notification.dart';
-import 'package:mc_custom_notification/models/notification_call.dart';
-import 'package:mc_custom_notification/models/notification_calling.dart';
-import 'package:mc_custom_notification/models/notification_message.dart';
+import 'dart:developer';
+import 'package:mc_custom_notification/src/mc_custom_notification_platform_interface.dart';
+import 'package:mc_custom_notification/src/models/notification.dart';
+import 'package:mc_custom_notification/src/models/notification_call.dart';
+import 'package:mc_custom_notification/src/models/notification_calling.dart';
+import 'package:mc_custom_notification/src/models/notification_message.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
@@ -143,7 +144,7 @@ class MethodChannelMcCustomNotification extends McCustomNotificationPlatform {
         imageUrl: payload['imageUrl'],
       );
     } catch (e) {
-      print(e);
+      log(e.toString());
     }
   }
 
@@ -189,7 +190,7 @@ class MethodChannelMcCustomNotification extends McCustomNotificationPlatform {
         onSpeaker!(call.arguments);
         break;
       default:
-        print('Unknown method ${call.method}');
+        log('Unknown method ${call.method}');
     }
   }
 }

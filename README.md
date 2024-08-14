@@ -85,7 +85,7 @@ Here's a quick example that shows how to use a `NotificationCall` in your app
 
 
 ```dart
-import 'package:mc_custom_notification/models/notification_call.dart';
+import 'package:mc_custom_notification/mc_custom_notifications.dart';
 
           await  McCustomNotification().showNotificationCall(
                       model: NotificationCall(
@@ -115,7 +115,7 @@ Here's a quick example that shows how to use a `NotificationCalling` in your app
 
 
 ```dart
-import 'package:mc_custom_notification/models/notification_calling.dart';
+import 'package:mc_custom_notification/mc_custom_notifications.dart';
 
                   await McCustomNotification().showNotificationCalling(
                     model: NotificationCalling(
@@ -142,7 +142,7 @@ Here's a quick example that shows how to use a `NotificationMessageWithInBox` in
 
 
 ```dart
-    import 'package:mc_custom_notification/models/notification_message.dart';
+import 'package:mc_custom_notification/mc_custom_notifications.dart';
 
                    await _testpluginPlugin.showNotificationMessage(
                       model: NotificationMessage(
@@ -211,7 +211,7 @@ Here's a quick example that shows how to use a `NotificationMessageWithOutInBox`
 
 
 ```dart
-import 'package:mc_custom_notification/models/notification_message.dart';
+import 'package:mc_custom_notification/mc_custom_notifications.dart';
 
                   await McCustomNotification().showNotificationMessage(
                       model: NotificationMessage(

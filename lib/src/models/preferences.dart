@@ -1,5 +1,7 @@
 // ignore_for_file: file_names
 
+import 'dart:developer';
+
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// A class for managing application preferences using [SharedPreferences].
@@ -44,7 +46,7 @@ class Preferences {
   /// This method is useful for debugging purposes to see all stored keys.
   static Future<void> printAll() async {
     var keys = pref.getKeys();
-    print(keys);
+    log(keys.toString());
   }
 
   /// Retrieves a string value from preferences for the given [key].

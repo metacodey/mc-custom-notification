@@ -1,6 +1,6 @@
-import 'package:mc_custom_notification/mc_custom_notification_method_channel.dart';
-import 'package:mc_custom_notification/mc_custom_notification_platform_interface.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mc_custom_notification/src/mc_custom_notification_platform_interface.dart';
+import 'package:mc_custom_notification/src/mc_custom_notification_method_channel.dart';
 
 // class MockCostumNotificationCallPlatform
 //     with MockPlatformInterfaceMixin

@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:googleapis_auth/auth_io.dart';
 import 'package:http/http.dart' as http;
-import 'package:mc_custom_notification/models/notification.dart';
+import 'package:mc_custom_notification/src/models/notification.dart';
 
 /// A service class for sending notifications via Firebase Cloud Messaging (FCM).
 ///
@@ -52,7 +52,7 @@ class FCMService {
     NotificationModel? model,
   }) async {
     final String accessToken = await _getAccessToken(serviceAccount);
-    print(accessToken);
+    //log(accessToken);
 
     String fcmEndpoint = "https://fcm.googleapis.com/v1/projects/$projectId";
     final url = Uri.parse('$fcmEndpoint/messages:send');

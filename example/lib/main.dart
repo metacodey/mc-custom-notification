@@ -1,12 +1,7 @@
 import 'dart:convert';
-import 'package:mc_custom_notification/models/preferences.dart';
 import 'package:mc_custom_notification/mc_custom_notification.dart';
-import 'package:mc_custom_notification/models/notification.dart';
-import 'package:mc_custom_notification/models/notification_call.dart';
-import 'package:mc_custom_notification/models/notification_calling.dart';
-import 'package:mc_custom_notification/models/notification_message.dart';
 import 'package:costum_notification_call_example/firebase_options.dart';
-import 'package:costum_notification_call_example/notificationFirebase.dart';
+import 'package:costum_notification_call_example/notification_firebase.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -15,7 +10,6 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Preferences.initPref();
   await dotenv.load(fileName: ".env");
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,

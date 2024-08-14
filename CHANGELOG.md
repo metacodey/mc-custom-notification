@@ -15,3 +15,7 @@
 ## 0.0.4
 
 * Fix Provide documentation
+
+## 0.0.5
+
+* Fix Provide documentation

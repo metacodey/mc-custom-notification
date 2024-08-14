@@ -1,8 +1,8 @@
-import 'package:mc_custom_notification/mc_custom_notification_method_channel.dart';
-import 'package:mc_custom_notification/models/notification.dart';
-import 'package:mc_custom_notification/models/notification_call.dart';
-import 'package:mc_custom_notification/models/notification_calling.dart';
-import 'package:mc_custom_notification/models/notification_message.dart';
+import 'package:mc_custom_notification/src/mc_custom_notification_method_channel.dart';
+import 'package:mc_custom_notification/src/models/notification.dart';
+import 'package:mc_custom_notification/src/models/notification_call.dart';
+import 'package:mc_custom_notification/src/models/notification_calling.dart';
+import 'package:mc_custom_notification/src/models/notification_message.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 import 'dart:typed_data';
 import 'package:http/http.dart' as http;
