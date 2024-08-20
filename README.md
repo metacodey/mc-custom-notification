@@ -5,6 +5,8 @@
 
 Custom notifications, call notifications, message notifications, calling notifications, regular notifications, Firebase notifications
 
+أشعارات مكالمة أشعارت اتصال أشعارات عاديه أشعارات رسائل أشعارات فايربيس 
+
 > Please contribute to the [discussion](https://github.com/metacodey/mc-custom-notification/issues) with issues.
 
 [<img src="https://meta-code-ye.com/mcwebsit/web/images/logo.png" width="200" />](https://meta-code-ye.com)
