@@ -23,3 +23,7 @@
 ## 0.0.6
 
 * Fix Provide documentation
+
+## 0.0.7
+
+* Arabic documentation
