@@ -1,9 +1,14 @@
 # MC Custom Notification
+[![English](https://img.shields.io/badge/lang-English-blue)](README.md) 
+[![Arabic](https://img.shields.io/badge/lang-Arabic-green)](README_AR.md) 
+
 
 [pub package](https://pub.dev/packages/mc_custom_notification)
 
 
 Custom notifications, call notifications, message notifications, calling notifications, regular notifications, Firebase notifications
+
+
 
 > Please contribute to the [discussion](https://github.com/metacodey/mc-custom-notification/issues) with issues.
 
