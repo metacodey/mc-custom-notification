@@ -81,12 +81,12 @@ class NotificationMessage extends NotificationModel {
   Map<String, dynamic> toMapMsg() {
     return <String, dynamic>{
       'id': id,
-      'tag': tag,
-      'title': title,
-      'body': body,
-      'payload': payload,
-      'base64Image': image,
-      'groupKey': groupKey,
+      'tag': tag ?? '',
+      'title': title ?? '',
+      'body': body ?? '',
+      'payload': payload ?? '',
+      'base64Image': image ?? '',
+      'groupKey': groupKey ?? '',
       'useInbox': useInbox ? "1" : "0",
       'isVibration': isVibration ? "1" : "0",
     };

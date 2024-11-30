@@ -2,7 +2,18 @@
 
 [pub package](https://pub.dev/packages/mc_custom_notification)
 
+
+أرسل الأن اشعارات مثل أشعارات واتساب 
+
 أشعارات مخصصة أشعارات مكالمة واردة أشعارات رسائل أشعارات اتصال أشعارات عادية أشعارات فايربيس أشعارات 
+
+
+
+## ملاحظات
+
+1. يجب ان تعرف ان المكتبة تستطيع العمل بدون فايربيس 
+
+
 
 > يرجى المساهمة في  .Please contribute to the [المناقشة](https://github.com/metacodey/mc-custom-notification/issues) بالقضايا.
 
@@ -16,6 +27,11 @@
 <img src="https://meta-code-ye.com/images/image/3.jpg" width="200" style="margin-right: 10px;" />
 <img src="https://meta-code-ye.com/images/image/4.jpg" width="200" style="margin-right: 10px;" />
 <img src="https://meta-code-ye.com/images/image/5.jpg" width="200" style="margin-right: 10px;" />
+<img src="https://meta-code-ye.com/images/image/6.jpg" width="200" style="margin-right: 10px;" />
+<img src="https://meta-code-ye.com/images/image/7.jpg" width="200" style="margin-right: 10px;" />
+<img src="https://meta-code-ye.com/images/image/8.jpg" width="200" style="margin-right: 10px;" />
+<img src="https://meta-code-ye.com/images/image/9.jpg" width="200" style="margin-right: 10px;" />
+<img src="https://meta-code-ye.com/images/image/10.jpg" width="200" style="margin-right: 10px;" />
 ]
 
 
@@ -145,64 +161,37 @@ import 'package:mc_custom_notification/mc_custom_notifications.dart';
 ```dart
 import 'package:mc_custom_notification/mc_custom_notifications.dart';
 
-                   await _testpluginPlugin.showNotificationMessage(
-                      model: NotificationMessage(
-                    useInbox: true,
-                    id: 555,
-                    tag: 'tag555',
-                    title: 'Younas Ali Ahmed',
-                    body: 'This is the body of the notification',
-                    image:
-                        "https://vpsserver.meta-code-ye.com/files/image?name=IMG-20240314-WA0007.jpg",
-                    payload: {'id': 55, "name": "ali"},
-                    groupKey: "chat",
-                    isVibration: true,
-                    onRead: (payload) {
-                      //set here event to read massage
-                    },
-                    onReply: (payload) {
-                      //set here event to replay massage
-                    },
-                  ));
-                  await _testpluginPlugin.showNotificationMessage(
-                      model: NotificationMessage(
-                    useInbox: true,
-                    id: 555,
-                    tag: 'tag555',
-                    title: 'Mohmmed Mohmmed',
-                    body: 'This is the body of the notification',
-                    image:
-                        "https://vpsserver.meta-code-ye.com/files/image?name=IMG-20240314-WA0007.jpg",
-                    payload: {'id': 55, "name": "ali"},
-                    groupKey: "chat",
-                    isVibration: true,
-                    onRead: (payload) {
-                      //set here event to read massage
-                    },
-                    onReply: (payload) {
-                      //set here event to replay massage
-                    },
-                  ));
-                  await _testpluginPlugin.showNotificationMessage(
-                      model: NotificationMessage(
-                    useInbox: true,
-                    id: 555,
-                    tag: 'tag555',
-                    title: 'Salh Salh',
-                    body: 'This is the body of the notification',
-                    image:
-                        "https://vpsserver.meta-code-ye.com/files/image?name=IMG-20240314-WA0007.jpg",
-                    payload: {'id': 55, "name": "ali"},
-                    groupKey: "chat",
-                    isVibration: true,
-                    onRead: (payload) {
-                      //set here event to read massage
-                    },
-                    onReply: (payload) {
-                      //set here event to replay massage
-                    },
-                  ));
+                       import 'package:mc_custom_notification/mc_custom_notifications.dart';
+         List names = ['younas', 'ali', 'mohammed', 'ahmed', 'salh'];
+                  var dis = [
+                    'nice to meet you',
+                    'hellow man',
+                    'how are you',
+                    'I need Vs code',
+                    'no thanks its work'
+                  ];
+                  for (var x = 0; x < names.length; x++) {
+                    await _testpluginPlugin.showNotificationMessage(
+                        model: NotificationMessage(
+                      useInbox: true,
+                      id: 11 + x,
+                      tag: 'tag111$x',
+                      title: names[x],
+                      body: dis[x],
+                      // image:
+                      //     "https://vpsserver.meta-code-ye.com/files/image?name=IMG-20240314-WA0007.jpg",
+                      payload: {'id': 55, "name": "ali"},
+                      groupKey: "chat55214",
 
+                      isVibration: true,
+                      onRead: (payload) {
+                        //set here event to read massage
+                      },
+                      onReply: (payload) {
+                        //set here event to replay massage
+                      },
+                    ));
+                  }
 ```
 
 
@@ -237,23 +226,28 @@ import 'package:mc_custom_notification/mc_custom_notifications.dart';
 
 ## Firebase
 
+أبداء نيئة المكتبة مع `فايربيس`
 
-هذا مثال بسيط يوضح كيف يمكنك  `ارسال الاشعار عبر فايربيس` في تطبيق
+```dart
+                      McCustomNotification().initialize(
+                        projectId: "id of your project in firebase",
+                        serviceAccount: {}// serviceAccount from firebase you can get it from google cloude,
+                        onClick: (payload) {
+                          //set here event when click notifications
+                        },
+                      );
+```
+
+
+
+هذا مثال بسيط يوضح كيف يمكنك  `ارسال الاشعار عبر فايربيس لشخص واحد` في تطبيق
 
 
 
 
 ```dart
-  McCustomNotification().initialize(
-    projectId: "يجب عليك الحصول على id المشروع الخاص بك من فايربيس",
-    serviceAccount: {}// ضع هنا معلومات حسابك من جوجل كلاود ,
-    onClick: (payload) {
-      //set here event when click notifications
-    },
-  );
 
-
-                  McCustomNotification.sendNotification(
+                  McCustomNotification().sendNotification(
                       token: token,
                       model: NotificationModel(
                         title: "younas ali",
@@ -265,6 +259,64 @@ import 'package:mc_custom_notification/mc_custom_notifications.dart';
                       ));
 
                       
+
+```
+
+
+
+هذا مثال بسيط يوضح كيف يمكنك  `ارسال الاشعار عبر فايربيس لعدة أشخاص ` في تطبيق
+
+
+
+```dart
+
+                  McCustomNotification().sendNotification(
+                      topics:
+                          "'dogs' in topics || 'cats' in topics ||'allUsers' in topics",
+                      model: NotificationModel(
+                        title: "younas ali",
+                        body: "hello how are you",
+                        id: 150,
+                        image:
+                            "https://vpsserver.meta-code-ye.com/files/image?name=IMG-20240314-WA0007.jpg",
+                        payload: {"id": 1, "name": "younas"},
+                      ));
+
+                      
+```
+
+
+## حتى تستطيع أرسال الأشعارات لعدة أشخاص 
+
+أنشاء أشتراك وجعل مجموعة من المستخدمين الأنضام الى الأشتراك 
+
+طريقة أنشاء اشتراك  
+
+اكتب أسم الأشتراك بين 'أشتراك' متبوعا بكلمة in topics 
+
+```dart
+
+    'meta_code' in topics 
+
+```
+
+طريقة جعل المستخدمين ينضمون الى الأشتراك 
+
+
+```dart
+
+    await FirebaseMessaging.instance.subscribeToTopic('meta_code');
+
+```
+
+
+يمكنك أرسال الأشعار الى عدة مجموعات وتصاغ بهذا الشكل 
+
+
+
+```dart
+
+      'meta' in topics || 'code' in topics ||'allUsers' in topics
 
 ```
 

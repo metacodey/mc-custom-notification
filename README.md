@@ -6,7 +6,13 @@
 [pub package](https://pub.dev/packages/mc_custom_notification)
 
 
+Send Notifications now Like Whatsapp And Telegram 
 Custom notifications, call notifications, message notifications, calling notifications, regular notifications, Firebase notifications
+
+## Notes
+
+1. You should know that the library can work withou `Firebase`
+2. an `Arabic` document is `Available` at this Button [![Arabic](https://img.shields.io/badge/lang-Arabic-green)](README_AR.md) 
 
 
 
@@ -22,6 +28,11 @@ Custom notifications, call notifications, message notifications, calling notific
 <img src="https://meta-code-ye.com/images/image/3.jpg" width="200" style="margin-right: 10px;" />
 <img src="https://meta-code-ye.com/images/image/4.jpg" width="200" style="margin-right: 10px;" />
 <img src="https://meta-code-ye.com/images/image/5.jpg" width="200" style="margin-right: 10px;" />
+<img src="https://meta-code-ye.com/images/image/6.jpg" width="200" style="margin-right: 10px;" />
+<img src="https://meta-code-ye.com/images/image/7.jpg" width="200" style="margin-right: 10px;" />
+<img src="https://meta-code-ye.com/images/image/8.jpg" width="200" style="margin-right: 10px;" />
+<img src="https://meta-code-ye.com/images/image/9.jpg" width="200" style="margin-right: 10px;" />
+<img src="https://meta-code-ye.com/images/image/10.jpg" width="200" style="margin-right: 10px;" />
 ]
 
 
@@ -147,65 +158,37 @@ Here's a quick example that shows how to use a `NotificationMessageWithInBox` in
 
 
 ```dart
-import 'package:mc_custom_notification/mc_custom_notifications.dart';
+        import 'package:mc_custom_notification/mc_custom_notifications.dart';
+         List names = ['younas', 'ali', 'mohammed', 'ahmed', 'salh'];
+                  var dis = [
+                    'nice to meet you',
+                    'hellow man',
+                    'how are you',
+                    'I need Vs code',
+                    'no thanks its work'
+                  ];
+                  for (var x = 0; x < names.length; x++) {
+                    await _testpluginPlugin.showNotificationMessage(
+                        model: NotificationMessage(
+                      useInbox: true,
+                      id: 11 + x,
+                      tag: 'tag111$x',
+                      title: names[x],
+                      body: dis[x],
+                      // image:
+                      //     "https://vpsserver.meta-code-ye.com/files/image?name=IMG-20240314-WA0007.jpg",
+                      payload: {'id': 55, "name": "ali"},
+                      groupKey: "chat55214",
 
-                   await _testpluginPlugin.showNotificationMessage(
-                      model: NotificationMessage(
-                    useInbox: true,
-                    id: 555,
-                    tag: 'tag555',
-                    title: 'Younas Ali Ahmed',
-                    body: 'This is the body of the notification',
-                    image:
-                        "https://vpsserver.meta-code-ye.com/files/image?name=IMG-20240314-WA0007.jpg",
-                    payload: {'id': 55, "name": "ali"},
-                    groupKey: "chat",
-                    isVibration: true,
-                    onRead: (payload) {
-                      //set here event to read massage
-                    },
-                    onReply: (payload) {
-                      //set here event to replay massage
-                    },
-                  ));
-                  await _testpluginPlugin.showNotificationMessage(
-                      model: NotificationMessage(
-                    useInbox: true,
-                    id: 555,
-                    tag: 'tag555',
-                    title: 'Mohmmed Mohmmed',
-                    body: 'This is the body of the notification',
-                    image:
-                        "https://vpsserver.meta-code-ye.com/files/image?name=IMG-20240314-WA0007.jpg",
-                    payload: {'id': 55, "name": "ali"},
-                    groupKey: "chat",
-                    isVibration: true,
-                    onRead: (payload) {
-                      //set here event to read massage
-                    },
-                    onReply: (payload) {
-                      //set here event to replay massage
-                    },
-                  ));
-                  await _testpluginPlugin.showNotificationMessage(
-                      model: NotificationMessage(
-                    useInbox: true,
-                    id: 555,
-                    tag: 'tag555',
-                    title: 'Salh Salh',
-                    body: 'This is the body of the notification',
-                    image:
-                        "https://vpsserver.meta-code-ye.com/files/image?name=IMG-20240314-WA0007.jpg",
-                    payload: {'id': 55, "name": "ali"},
-                    groupKey: "chat",
-                    isVibration: true,
-                    onRead: (payload) {
-                      //set here event to read massage
-                    },
-                    onReply: (payload) {
-                      //set here event to replay massage
-                    },
-                  ));
+                      isVibration: true,
+                      onRead: (payload) {
+                        //set here event to read massage
+                      },
+                      onReply: (payload) {
+                        //set here event to replay massage
+                      },
+                    ));
+                  }
 
 ```
 
@@ -240,23 +223,27 @@ import 'package:mc_custom_notification/mc_custom_notifications.dart';
 
 ## Firebase
 
+ Initializing With `Firebase` 
 
 
-Here's a quick example that shows how to use a `Send Notification With Firebase` in your app
+```dart
+                      McCustomNotification().initialize(
+                        projectId: "id of your project in firebase",
+                        serviceAccount: {}// serviceAccount from firebase you can get it from google cloude,
+                        onClick: (payload) {
+                          //set here event when click notifications
+                        },
+                      );
+```
+
+
+Here's a quick example that shows how to use a `Send Notification With Firebase For One` in your app
 
 
 
 ```dart
-  McCustomNotification().initialize(
-    projectId: "id of your project in firebase",
-    serviceAccount: {}// serviceAccount from firebase you can get it from google cloude,
-    onClick: (payload) {
-      //set here event when click notifications
-    },
-  );
-
-
-                  McCustomNotification.sendNotification(
+                    
+                  McCustomNotification().sendNotification(
                       token: token,
                       model: NotificationModel(
                         title: "younas ali",
@@ -271,6 +258,68 @@ Here's a quick example that shows how to use a `Send Notification With Firebase`
 
 ```
 
+
+
+Here's a quick example that shows how to use a `Send Notification With Firebase For Group Of Subscribers` in your app
+
+
+
+```dart
+                
+               McCustomNotification().sendNotificationToAll(
+                      topics:
+                          "'dogs' in topics || 'cats' in topics ||'allUsers' in topics",
+                      model: NotificationModel(
+                        title: "younas ali",
+                        body: "hello how are you",
+                        groupKey: 'normal_notification',
+                        id: 150,
+                        image:
+                            "https://vpsserver.meta-code-ye.com/files/image?name=IMG-20240314-WA0007.jpg",
+                        payload: {"id": 1, "name": "younas"},
+                      ));
+
+                      
+
+```
+
+## To Send Notifications to Multiple Users
+
+
+Create a subscription and have a group of users join the subscription
+
+
+## How to Create a Subscription
+
+Write the subscription name between single quotes followed by the keyword in topics:
+
+```dart
+
+'meta_code' in topics
+
+```
+
+How to Have Users Join the Subscription
+
+
+```dart
+
+await FirebaseMessaging.instance.subscribeToTopic('meta_code');
+
+
+```
+
+
+Sending Notifications to Multiple Groups
+
+
+
+```dart
+
+'meta' in topics || 'code' in topics || 'allUsers' in topics
+
+
+```
 
 
 
@@ -340,6 +389,14 @@ Here's a quick example that shows how to use a `Notification With Firebase in fo
 
 The rest of the things are explained in the example
 
+The example works well and includes all the requirements, even the Google Cloud service keys.
+
+## Obtaining Google Cloud Keys
+
+The method is very simple; here’s a video explaining it:
+
+
+[Video Tutorial on Obtaining Google Cloud Keys](https://www.youtube.com/watch?v=X3i9SErMGD0&t=991s)
 
 
 

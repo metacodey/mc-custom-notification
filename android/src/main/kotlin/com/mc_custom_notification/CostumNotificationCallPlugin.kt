@@ -202,7 +202,7 @@ class CostumNotificationCallPlugin : FlutterPlugin, MethodCallHandler, ActivityA
             val payload = intent.getSerializableExtra("payload") as? HashMap<String, Any>
             val useInbox=intent.getBooleanExtra("useInbox",false)
            var model= NotificationModel(notificationId, tag, title, body, null, payload, groupKey, useInbox = useInbox)
-        model.removeNoit(title?:"")
+        model.removeNoit(tag+notificationId.toString(),groupKey,context)
 
         }
     }
@@ -217,6 +217,8 @@ class CostumNotificationCallPlugin : FlutterPlugin, MethodCallHandler, ActivityA
             val payload = intent.getSerializableExtra("payload") as? HashMap<String, Any>
             val useInbox=intent.getBooleanExtra("useInbox",false)
             channelCall.invokeMethod("onDecline", mapOf("notification_id" to notificationId, "tag" to tag,"groupKey" to groupKey,"body" to  body,"title" to  title,"useInbox" to  useInbox, "payload" to payload))
+            var model= NotificationModel(notificationId, tag, title, body, null, payload, groupKey, useInbox = useInbox)
+            model.removeNoit(tag+notificationId.toString(),groupKey,context)
         }
     }
 
@@ -243,6 +245,9 @@ class CostumNotificationCallPlugin : FlutterPlugin, MethodCallHandler, ActivityA
             val payload = intent.getSerializableExtra("payload") as? HashMap<String, Any>
             val useInbox=intent.getBooleanExtra("useInbox",false)
             channel.invokeMethod("onClick",mapOf("notification_id" to notificationId, "tag" to tag,"groupKey" to groupKey,"body" to  body,"title" to  title,"useInbox" to  useInbox, "payload" to payload))
+            var model= NotificationModel(notificationId, tag, title, body, null, payload, groupKey, useInbox = useInbox)
+            Log.d( "onclicked: ","$groupKey---------------------------------groupKey")
+            model.removeNoit(tag+notificationId.toString(),groupKey,context)
         }
     }
 
@@ -256,6 +261,8 @@ class CostumNotificationCallPlugin : FlutterPlugin, MethodCallHandler, ActivityA
             val payload = intent.getSerializableExtra("payload") as? HashMap<String, Any>
             val useInbox=intent.getBooleanExtra("useInbox",false)
             channelMessage.invokeMethod("onRead", mapOf("notification_id" to notificationId, "tag" to tag,"groupKey" to groupKey,"body" to  body,"title" to  title,"useInbox" to  useInbox, "payload" to payload))
+            var model= NotificationModel(notificationId, tag, title, body, null, payload, groupKey, useInbox = useInbox)
+            model.removeNoit(tag+notificationId.toString(),groupKey,context)
         }
     }
 

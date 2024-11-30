@@ -1,8 +1,11 @@
+import 'dart:io';
+
 import 'package:mc_custom_notification/src/mc_custom_notification_method_channel.dart';
 import 'package:mc_custom_notification/src/models/notification.dart';
 import 'package:mc_custom_notification/src/models/notification_call.dart';
 import 'package:mc_custom_notification/src/models/notification_calling.dart';
 import 'package:mc_custom_notification/src/models/notification_message.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 import 'dart:typed_data';
 import 'package:http/http.dart' as http;
@@ -101,30 +104,49 @@ abstract class McCustomNotificationPlatform extends PlatformInterface {
   ///
   /// [imageUrl] is the URL of the image to be fetched.
   /// The image is optionally processed using the `image` package before being returned.
+
+  /// Fetches an image from a URL and returns it as a [Uint8List].
+  /// Caches the image to the temporary directory for reuse.
   Future<Uint8List> getImageFromUrl(String imageUrl) async {
     try {
-      // Fetch the image from the URL
-      final response = await http.get(Uri.parse(imageUrl));
+      // Get the temporary directory path
+      final tempDir = await getTemporaryDirectory();
+      final tempFile =
+          File('${tempDir.path}/${Uri.parse(imageUrl).pathSegments.last}');
 
-      // Check if the request was successful
-      if (response.statusCode == 200) {
-        // Convert the response body to Uint8List
-        Uint8List bytes = response.bodyBytes;
-
-        // Optionally, process the image using the 'image' package
-        img.Image? image = img.decodeImage(bytes);
-        if (image != null) {
-          // Convert the processed image back to Uint8List
-          Uint8List processedBytes = Uint8List.fromList(img.encodePng(image));
-          return processedBytes;
-        } else {
-          throw Exception("Failed to decode image");
-        }
+      // Check if the image already exists in the temporary directory
+      if (await tempFile.exists()) {
+        // Return the cached image
+        return await tempFile.readAsBytes();
       } else {
-        throw Exception("Failed to load image");
+        // Fetch the image from the URL
+        final response = await http.get(Uri.parse(imageUrl));
+
+        // Check if the request was successful
+        if (response.statusCode == 200) {
+          // Convert the response body to Uint8List
+          Uint8List bytes = response.bodyBytes;
+
+          // Optionally, process the image using the 'image' package
+          img.Image? image = img.decodeImage(bytes);
+          if (image != null) {
+            // Convert the processed image back to Uint8List
+            Uint8List processedBytes = Uint8List.fromList(img.encodePng(image));
+
+            // Save the image to the temporary directory
+            await tempFile.writeAsBytes(processedBytes);
+
+            // Return the processed image
+            return processedBytes;
+          } else {
+            throw Exception("Failed to decode image");
+          }
+        } else {
+          throw Exception("Failed to load image");
+        }
       }
     } catch (e) {
-      throw Exception("Failed to load image");
+      throw Exception("Failed to load or process image: $e");
     }
   }
 }

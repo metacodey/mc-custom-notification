@@ -2,6 +2,8 @@
 import 'dart:async';
 import 'dart:developer';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mc_custom_notification/mc_custom_notification.dart';
 
 NotificationService notificationService = NotificationService();
@@ -17,32 +19,40 @@ class NotificationService {
   NotificationService._internal();
 
   Future<void> init() async {
+    await FirebaseMessaging.instance.subscribeToTopic('allUsers');
+    await FirebaseMessaging.instance.setAutoInitEnabled(true);
+
     await FirebaseMessaging.instance
         .setForegroundNotificationPresentationOptions(
             alert: true, badge: true, sound: true);
+    getToken();
     FirebaseMessaging.instance.getInitialMessage().then(hendleMessage);
     FirebaseMessaging.onMessageOpenedApp.listen(hendleMessage);
     FirebaseMessaging.onMessage.listen((event) {
       final payload = event.data;
       log('payload: $payload');
       var model = NotificationModel.fromMap(payload);
-      McCustomNotification().showNotificationMessage(
-          model: NotificationMessage(
-        id: 6,
-        tag: model.tag,
-        title: model.title,
-        body: model.body,
-        image: model.image,
-        payload: model.payload,
-        groupKey: model.groupKey,
-        useInbox: true,
-        onRead: (payload) {
-          //set here event to read massage
-        },
-        onReply: (payload) {
-          //set here event to replay massage
-        },
-      ));
+      if (model.groupKey == "normal_notification") {
+        McCustomNotification().showNotificationNormal(model: model);
+      } else {
+        McCustomNotification().showNotificationMessage(
+            model: NotificationMessage(
+          id: 6,
+          tag: model.tag,
+          title: model.title,
+          body: model.body,
+          image: model.image,
+          payload: model.payload,
+          groupKey: model.groupKey,
+          useInbox: true,
+          onRead: (payload) {
+            //set here event to read massage
+          },
+          onReply: (payload) {
+            //set here event to replay massage
+          },
+        ));
+      }
     });
   }
 
@@ -74,23 +84,34 @@ class NotificationService {
 
 Future<void> handeleBachgroundMessage(RemoteMessage message) async {
   var payloadData = message.data;
+  Fluttertoast.showToast(
+    msg: payloadData.toString(),
+    backgroundColor: Colors.black,
+    toastLength: Toast.LENGTH_SHORT,
+    textColor: Colors.white,
+    gravity: ToastGravity.BOTTOM,
+  );
   log(payloadData.toString());
   var model = NotificationModel.fromMap(payloadData);
-  McCustomNotification().showNotificationMessage(
-      model: NotificationMessage(
-    id: 5,
-    tag: model.tag,
-    title: model.title,
-    body: model.body,
-    image: model.image,
-    payload: model.payload,
-    groupKey: model.groupKey,
-    useInbox: true,
-    onRead: (payload) {
-      //set here event to read massage
-    },
-    onReply: (payload) {
-      //set here event to replay massage
-    },
-  ));
+  if (model.groupKey == "normal_notification") {
+    McCustomNotification().showNotificationNormal(model: model);
+  } else {
+    McCustomNotification().showNotificationMessage(
+        model: NotificationMessage(
+      id: 5,
+      tag: model.tag,
+      title: model.title,
+      body: model.body,
+      image: model.image,
+      payload: model.payload,
+      groupKey: model.groupKey,
+      useInbox: true,
+      onRead: (payload) {
+        //set here event to read massage
+      },
+      onReply: (payload) {
+        //set here event to replay massage
+      },
+    ));
+  }
 }

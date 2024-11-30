@@ -74,7 +74,7 @@ class NotificationReceiver : BroadcastReceiver() {
                 sendActionBroadcast(context!!, notificationId, tag, payload,title,body,groupKey, "DECLINE_ACTION",false)
             }
             "com.mc_custom_notification.CLICK" -> {
-                Log.d("NotificationClickReceiver", "Notification clicked for notification ID: $notificationId, tag: $tag, payload: $payload")
+                Log.d("NotificationClickReceiver", "Notification clicked for notification ID: $notificationId, tag: $tag,GroupKey:$groupKey , payload: $payload")
                 handleNotificationAction(context!!, notificationId, tag, payload,title,body,groupKey, "CLICK_ACTION",false,useInbox)
             }
             else -> {

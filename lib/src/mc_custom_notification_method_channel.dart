@@ -120,9 +120,10 @@ class MethodChannelMcCustomNotification extends McCustomNotificationPlatform {
   ///
   /// [payload] contains the data required to construct and display the reply notification.
   Future<void> _onReplayMsg(dynamic payload) async {
+    log(payload.toString());
     try {
       String? base64Image;
-      if (payload['payload'].toString().contains("imageUrl")) {
+      if (payload['payload']['imageUrl'] != null) {
         var imageBytes = await McCustomNotificationPlatform.instance
             .getImageFromUrl(payload['payload']['imageUrl']);
         base64Image = base64Encode(imageBytes);
@@ -136,12 +137,12 @@ class MethodChannelMcCustomNotification extends McCustomNotificationPlatform {
             body: payload['payload']['msg'] ?? "",
             groupKey: payload['groupKey'] ?? "",
             payload: payloadMap,
-            tag: payload['tag'] ?? "",
+            tag: payload['tag'],
             image: base64Image ?? "",
-            title: payload['title'] ?? "",
+            title: "You ",
             useInbox: payload['useInbox'] ?? false,
             isVibration: false),
-        imageUrl: payload['imageUrl'],
+        //  imageUrl: payload['imageUrl'],
       );
     } catch (e) {
       log(e.toString());

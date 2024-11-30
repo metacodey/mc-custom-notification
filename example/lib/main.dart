@@ -14,7 +14,7 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  notificationService.init();
+  await notificationService.init();
 
   FirebaseMessaging.onBackgroundMessage(handeleBachgroundMessage);
   var map = jsonDecode(dotenv.env['ACCOUNT_SERVICES'] ?? '');
@@ -57,23 +57,9 @@ class _MyAppState extends State<MyApp> {
                 child: Text('Running on: test \n'),
               ),
               ElevatedButton(
-                child: const Text('Show All showNotification'),
+                child: const Text('Show Notification call'),
                 onPressed: () async {
-                  var test = await _testpluginPlugin.getAllNotificcations();
-                  Fluttertoast.showToast(
-                      msg: test.toString(),
-                      toastLength: Toast.LENGTH_LONG,
-                      gravity: ToastGravity.CENTER,
-                      timeInSecForIosWeb: 1,
-                      backgroundColor: Colors.red,
-                      textColor: Colors.white,
-                      fontSize: 16.0);
-                },
-              ),
-              ElevatedButton(
-                child: const Text('Show showNotification call'),
-                onPressed: () async {
-                  McCustomNotification().showNotificationCall(
+                  await _testpluginPlugin.showNotificationCall(
                       model: NotificationCall(
                     id: 1,
                     tag: 'tag1',
@@ -93,7 +79,7 @@ class _MyAppState extends State<MyApp> {
                 },
               ),
               ElevatedButton(
-                child: const Text('show calling showNotification'),
+                child: const Text('show calling Notification'),
                 onPressed: () async {
                   await _testpluginPlugin.showNotificationCalling(
                     model: NotificationCalling(
@@ -116,53 +102,43 @@ class _MyAppState extends State<MyApp> {
                 },
               ),
               ElevatedButton(
-                child: const Text('Show showNotification Messsage'),
+                child: const Text('Notification For One User Messsages'),
                 onPressed: () async {
+                  for (var x = 0; x < 5; x++) {
+                    await _testpluginPlugin.showNotificationMessage(
+                        model: NotificationMessage(
+                      useInbox: true,
+                      id: 111,
+                      tag: 'tag111',
+                      title: 'Younas Ali Ahmed',
+                      body: 'nice to meet you $x',
+                      image:
+                          "https://vpsserver.meta-code-ye.com/files/image?name=IMG-20240314-WA0007.jpg",
+                      payload: {'id': 55, "name": "ali"},
+                      groupKey: "chat22",
+                      isVibration: true,
+                      onRead: (payload) {
+                        //set here event to read massage
+                      },
+                      onReply: (payload) {
+                        //set here event to replay massage
+                      },
+                    ));
+                  }
+                },
+              ),
+              ElevatedButton(
+                child: const Text(
+                    'Notification For One User Messsages With Replay'),
+                onPressed: () async {
+                  //just replay and you will see that
                   await _testpluginPlugin.showNotificationMessage(
                       model: NotificationMessage(
                     useInbox: true,
-                    id: 555,
-                    tag: 'tag555',
+                    id: 11641,
+                    tag: 'tag11441',
                     title: 'Younas Ali Ahmed',
-                    body: 'This is the body of the notification',
-                    image:
-                        "https://vpsserver.meta-code-ye.com/files/image?name=IMG-20240314-WA0007.jpg",
-                    payload: {'id': 55, "name": "ali"},
-                    groupKey: "chat",
-                    isVibration: true,
-                    onRead: (payload) {
-                      //set here event to read massage
-                    },
-                    onReply: (payload) {
-                      //set here event to replay massage
-                    },
-                  ));
-                  await _testpluginPlugin.showNotificationMessage(
-                      model: NotificationMessage(
-                    useInbox: true,
-                    id: 555,
-                    tag: 'tag555',
-                    title: 'Mohmmed Mohmmed',
-                    body: 'This is the body of the notification',
-                    image:
-                        "https://vpsserver.meta-code-ye.com/files/image?name=IMG-20240314-WA0007.jpg",
-                    payload: {'id': 55, "name": "ali"},
-                    groupKey: "chat",
-                    isVibration: true,
-                    onRead: (payload) {
-                      //set here event to read massage
-                    },
-                    onReply: (payload) {
-                      //set here event to replay massage
-                    },
-                  ));
-                  await _testpluginPlugin.showNotificationMessage(
-                      model: NotificationMessage(
-                    useInbox: true,
-                    id: 555,
-                    tag: 'tag555',
-                    title: 'Salh Salh',
-                    body: 'This is the body of the notification',
+                    body: 'nice to meet you ',
                     image:
                         "https://vpsserver.meta-code-ye.com/files/image?name=IMG-20240314-WA0007.jpg",
                     payload: {'id': 55, "name": "ali"},
@@ -178,30 +154,66 @@ class _MyAppState extends State<MyApp> {
                 },
               ),
               ElevatedButton(
-                child:
-                    const Text('Show showNotification  Messsage Without Inbox'),
+                child: const Text('Notification For Multi Users'),
                 onPressed: () async {
-                  _testpluginPlugin.showNotificationMessage(
-                      model: NotificationMessage(
-                    id: 2,
-                    tag: 'tag12',
-                    title: 'Younas Ali Ahmed',
-                    body: 'This is the body of the notification',
-                    image:
-                        "https://vpsserver.meta-code-ye.com/files/image?name=IMG-20240314-WA0007.jpg",
-                    payload: {'id': 55, "name": "ali"},
-                    groupKey: "chat",
-                    onRead: (payload) {
-                      //set here event to read massage
-                    },
-                    onReply: (payload) {
-                      //set here event to replay massage
-                    },
-                  ));
+                  List names = ['younas', 'ali', 'mohammed', 'ahmed', 'salh'];
+                  var dis = [
+                    'nice to meet you',
+                    'hellow man',
+                    'how are you',
+                    'I need Vs code',
+                    'no thanks its work'
+                  ];
+                  for (var x = 0; x < names.length; x++) {
+                    await _testpluginPlugin.showNotificationMessage(
+                        model: NotificationMessage(
+                      useInbox: true,
+                      id: 11 + x,
+                      tag: 'tag111$x',
+                      title: names[x],
+                      body: dis[x],
+                      // image:
+                      //     "https://vpsserver.meta-code-ye.com/files/image?name=IMG-20240314-WA0007.jpg",
+                      payload: {'id': 55, "name": "ali"},
+                      groupKey: "chat55214",
+
+                      isVibration: true,
+                      onRead: (payload) {
+                        //set here event to read massage
+                      },
+                      onReply: (payload) {
+                        //set here event to replay massage
+                      },
+                    ));
+                  }
                 },
               ),
               ElevatedButton(
-                child: const Text('show Normal showNotification'),
+                child: const Text('Show Notification  Messsage Without Inbox'),
+                onPressed: () async {
+                  for (var x = 0; x < 5; x++) {
+                    await _testpluginPlugin.showNotificationMessage(
+                        model: NotificationMessage(
+                      id: x,
+                      tag: 'tag12$x',
+                      title: 'Younas Ali Ahmed',
+                      body: 'This is the body of the notification',
+                      image:
+                          "https://vpsserver.meta-code-ye.com/files/image?name=IMG-20240314-WA0007.jpg",
+                      payload: {'id': 55, "name": "ali"},
+                      groupKey: "chatattt",
+                      onRead: (payload) {
+                        //set here event to read massage
+                      },
+                      onReply: (payload) {
+                        //set here event to replay massage
+                      },
+                    ));
+                  }
+                },
+              ),
+              ElevatedButton(
+                child: const Text('show Normal Notification'),
                 onPressed: () async {
                   await _testpluginPlugin.showNotificationNormal(
                       model: NotificationModel(
@@ -211,19 +223,6 @@ class _MyAppState extends State<MyApp> {
                           body: 'This is the body of the notification',
                           payload: {'id': 55, "name": "ali"},
                           groupKey: "normal53"));
-                },
-              ),
-              ElevatedButton(
-                child: const Text('cancel All showNotification'),
-                onPressed: () {
-                  _testpluginPlugin.cancelAllNotifications();
-                },
-              ),
-              ElevatedButton(
-                child: const Text('cancel showNotification'),
-                onPressed: () {
-                  _testpluginPlugin.cancelNotification(id: 1, tag: "tag1");
-                  _testpluginPlugin.cancelNotification(id: 2, tag: "tag12");
                 },
               ),
               ElevatedButton(
@@ -240,14 +239,52 @@ class _MyAppState extends State<MyApp> {
                         payload: {"id": 1, "name": "younas"},
                       ));
                 },
-                child: const Text('Send Chat Message'),
+                child: const Text('Send Chat Notification Message by Firebase'),
               ),
-              // ElevatedButton(
-              //   onPressed: () async {
-              //     _sendChatMessage('hello man', 'younas ali', 13, 'chat1');
-              //   },
-              //   child: const Text('group Chat Message'),
-              // ),
+              ElevatedButton(
+                onPressed: () async {
+                  _testpluginPlugin.sendNotificationToAll(
+                      topics:
+                          "'meta' in topics || 'code' in topics ||'allUsers' in topics",
+                      model: NotificationModel(
+                        title: "younas ali",
+                        body: "hello how are you",
+                        groupKey: 'normal_notification',
+                        id: 150,
+                        image:
+                            "https://vpsserver.meta-code-ye.com/files/image?name=IMG-20240314-WA0007.jpg",
+                        payload: {"id": 1, "name": "younas"},
+                      ));
+                },
+                child: const Text('Send  Multi Notifications by Firebase'),
+              ),
+              ElevatedButton(
+                child: const Text('Show All Notification'),
+                onPressed: () async {
+                  var test = await _testpluginPlugin.getAllNotificcations();
+                  Fluttertoast.showToast(
+                      msg: test.toString(),
+                      toastLength: Toast.LENGTH_LONG,
+                      gravity: ToastGravity.CENTER,
+                      timeInSecForIosWeb: 1,
+                      backgroundColor: Colors.red,
+                      textColor: Colors.white,
+                      fontSize: 16.0);
+                },
+              ),
+              ElevatedButton(
+                child: const Text('cancel All Notification'),
+                onPressed: () {
+                  _testpluginPlugin.cancelAllNotifications();
+                },
+              ),
+              ElevatedButton(
+                child: const Text('cancel Notification'),
+                onPressed: () {
+                  _testpluginPlugin.cancelNotification(id: 555, tag: "tag55");
+                  // _testpluginPlugin.cancelNotification(id: 2, tag: "tag12");
+                },
+              ),
             ],
           ),
         ),

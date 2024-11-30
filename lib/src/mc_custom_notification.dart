@@ -131,10 +131,29 @@ class McCustomNotification {
     final projectId = Preferences.getString(Preferences.projectId);
     final serviceAccount = Preferences.getString(Preferences.serviceAccount);
     if (projectId.isNotEmpty && serviceAccount.isNotEmpty) {
-      FCMService.sendNotification(
+      FCMService.sendNotificationToOne(
           serviceAccount: jsonDecode(serviceAccount),
           projectId: projectId,
           recipientFCMToken: token,
+          model: model);
+    } else {
+      log("Error: You must add a Firebase project ID and service account.");
+    }
+  }
+
+  /// Sends a notification To Multi  a devices using Firebase Cloud Messaging (FCM).
+  ///
+  /// [topics]is the condition or topic targeting string (e.g., "'dogs' in topics || 'cats' in topics").
+  /// [model] contains the details of the notification to be sent.
+  Future<void> sendNotificationToAll(
+      {required String topics, NotificationModel? model}) async {
+    final projectId = Preferences.getString(Preferences.projectId);
+    final serviceAccount = Preferences.getString(Preferences.serviceAccount);
+    if (projectId.isNotEmpty && serviceAccount.isNotEmpty) {
+      FCMService.sendNotificationToAll(
+          serviceAccount: jsonDecode(serviceAccount),
+          projectId: projectId,
+          topics: topics,
           model: model);
     } else {
       log("Error: You must add a Firebase project ID and service account.");

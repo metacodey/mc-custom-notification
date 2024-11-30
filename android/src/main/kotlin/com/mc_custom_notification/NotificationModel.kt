@@ -19,8 +19,14 @@ import kotlinx.parcelize.Parcelize
 import kotlinx.parcelize.RawValue
 import android.app.PendingIntent
 import android.content.Intent
-import java.io.ByteArrayOutputStream
 import androidx.core.app.RemoteInput
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.Rect
+import android.graphics.RectF
+import android.os.Handler
+import android.os.Looper
 
 @Parcelize
 data class NotificationModel(
@@ -38,6 +44,25 @@ data class NotificationModel(
     val isVibration:Boolean=true
 ) : Parcelable {
 
+    fun makeCircularBitmap(bitmap: Bitmap): Bitmap {
+        val size = Math.min(bitmap.width, bitmap.height)
+        val output = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(output)
+
+        val paint = Paint()
+        val rect = Rect(0, 0, size, size)
+        val rectF = RectF(rect)
+
+        paint.isAntiAlias = true
+        canvas.drawARGB(0, 0, 0, 0)
+        paint.color = Color.parseColor("#BAB399") // Optional: Add a border color
+        canvas.drawOval(rectF, paint)
+
+        paint.xfermode = android.graphics.PorterDuffXfermode(android.graphics.PorterDuff.Mode.SRC_IN)
+        canvas.drawBitmap(bitmap, rect, rect, paint)
+
+        return output
+    }
     fun decodeBase64ToBitmap(base64Str: String?): Bitmap? {
         return try {
             val decodedBytes =Base64.decode(base64Str, Base64.DEFAULT)
@@ -68,48 +93,48 @@ data class NotificationModel(
     fun showNotificationNormal(context: Context) {
         showNotification(context, R.layout.notification_layout_normal, RingtoneManager.TYPE_NOTIFICATION, true, false,false)
     }
-    
+
     fun showNotificationCalling(context: Context) {
         notificationCalling(context)
     }
 
 
-private fun createChannelNotification(context: Context,channelId:String,channelName:String,ringtoneType: Int,isCalling:Boolean){
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {   
-        val soundUri: Uri = RingtoneManager.getDefaultUri(ringtoneType)
-        if(isCalling){
-       
-              val channel = NotificationChannel(
-                  channelId,
-                  channelName,
-                  NotificationManager.IMPORTANCE_DEFAULT
-              ).apply {
-                  description = "Channel for $channelName"
-                  setSound(soundUri,null)
-              }
-              val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-              notificationManager.createNotificationChannel(channel)
-          
-        }else{
-              val channel = NotificationChannel(
-                  channelId,
-                  channelName,
-                  NotificationManager.IMPORTANCE_HIGH
-              ).apply {
-                  description = "Channel for $channelName"
-                  enableVibration(isVibration)
-                  enableLights(true)
-                  vibrationPattern = if(isVibration)  longArrayOf(0, 1000, 500, 1000) else   longArrayOf(0L)
-                  setSound(soundUri, AudioAttributes.Builder()
-                      .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-                      .setUsage(if (ringtoneType == RingtoneManager.TYPE_RINGTONE) AudioAttributes.USAGE_NOTIFICATION_RINGTONE else AudioAttributes.USAGE_NOTIFICATION)
-                      .build())
-              }
-              val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-              notificationManager.createNotificationChannel(channel)
-            
-      }
-    }
+    private fun createChannelNotification(context: Context,channelId:String,channelName:String,ringtoneType: Int,isCalling:Boolean){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val soundUri: Uri = RingtoneManager.getDefaultUri(ringtoneType)
+            if(isCalling){
+
+                val channel = NotificationChannel(
+                    channelId,
+                    channelName,
+                    NotificationManager.IMPORTANCE_DEFAULT
+                ).apply {
+                    description = "Channel for $channelName"
+                    setSound(soundUri,null)
+                }
+                val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+                notificationManager.createNotificationChannel(channel)
+
+            }else{
+                val channel = NotificationChannel(
+                    channelId,
+                    channelName,
+                    NotificationManager.IMPORTANCE_HIGH
+                ).apply {
+                    description = "Channel for $channelName"
+                    enableVibration(isVibration)
+                    enableLights(true)
+                    vibrationPattern = if(isVibration)  longArrayOf(0, 1000, 500, 1000) else   longArrayOf(0L)
+                    setSound(soundUri, AudioAttributes.Builder()
+                        .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                        .setUsage(if (ringtoneType == RingtoneManager.TYPE_RINGTONE) AudioAttributes.USAGE_NOTIFICATION_RINGTONE else AudioAttributes.USAGE_NOTIFICATION)
+                        .build())
+                }
+                val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+                notificationManager.createNotificationChannel(channel)
+
+            }
+        }
     }
 
     private fun showNotification(context: Context, layoutId: Int, ringtoneType: Int, autoCancel: Boolean, fullScreen: Boolean,isChat: Boolean) {
@@ -118,7 +143,7 @@ private fun createChannelNotification(context: Context,channelId:String,channelN
         } else {
             "message_notification_channel_id"
         }
-        
+
         val channelName = if (ringtoneType == RingtoneManager.TYPE_RINGTONE) {
             "Ringtone Channel"
         } else {
@@ -126,7 +151,7 @@ private fun createChannelNotification(context: Context,channelId:String,channelN
         }
         createChannelNotification(context,channelId,channelName,ringtoneType,false)
         val soundUri: Uri = RingtoneManager.getDefaultUri(ringtoneType)
-    
+
         // Create intents for "Decline", "Accept", and notification click actions
         val declinePendingIntent = createPendingIntent(context, "DECLINE")
         val acceptPendingIntent = createPendingIntent(context, "ACCEPT")
@@ -134,27 +159,27 @@ private fun createChannelNotification(context: Context,channelId:String,channelN
         val readPendingIntent = createPendingIntent(context, "READ")
         val replyPendingIntent = createPendingIntent(context, "REPLY",useInbox)
         val hidePendingIntent = createPendingIntent(context, "DECLINE")
-      
-         val replyLabel = "Enter your reply"
-         val remoteInput = RemoteInput.Builder("key_text_reply")
-             .setLabel(replyLabel)
-             .build()
- 
-         val smallIconResId = getAppIconResourceId(context)
- 
-         val replyAction = NotificationCompat.Action.Builder(
-            smallIconResId, "Reply", replyPendingIntent)
-             .addRemoteInput(remoteInput)
-             .build()
 
-             val readAction = NotificationCompat.Action.Builder(
-                smallIconResId, "Read", readPendingIntent)
-                .build()
-    
-            val hideAction = NotificationCompat.Action.Builder(
-                smallIconResId, "Hide", hidePendingIntent)
-                .build()
-       
+        val replyLabel = "Enter your reply"
+        val remoteInput = RemoteInput.Builder("key_text_reply")
+            .setLabel(replyLabel)
+            .build()
+
+        val smallIconResId = getAppIconResourceId(context)
+
+        val replyAction = NotificationCompat.Action.Builder(
+            smallIconResId, "Reply", replyPendingIntent)
+            .addRemoteInput(remoteInput)
+            .build()
+
+        val readAction = NotificationCompat.Action.Builder(
+            smallIconResId, "Read", readPendingIntent)
+            .build()
+
+        val hideAction = NotificationCompat.Action.Builder(
+            smallIconResId, "Hide", hidePendingIntent)
+            .build()
+
 
         val builder = NotificationCompat.Builder(context, channelId)
             .setSmallIcon(smallIconResId)
@@ -174,9 +199,9 @@ private fun createChannelNotification(context: Context,channelId:String,channelN
             .setGroup(groupKey)
         if(isChat){
             builder.addAction(replyAction)
-            .addAction(readAction)
-            .addAction(hideAction)
-            }
+                .addAction(readAction)
+                .addAction(hideAction)
+        }
 
         if (fullScreen) {
             builder.setFullScreenIntent(clickPendingIntent, true)
@@ -189,9 +214,9 @@ private fun createChannelNotification(context: Context,channelId:String,channelN
         }
     }
 
-    
+
     private fun notificationCalling(context: Context) {
-        val channelId ="calilng_notification_channel_id"  
+        val channelId ="calilng_notification_channel_id"
         val channelName = "calling Channel"
         createChannelNotification(context,channelId,channelName,RingtoneManager.TYPE_NOTIFICATION,true)
         // Create intents for "Decline", "Accept", and notification click actions
@@ -230,7 +255,7 @@ private fun createChannelNotification(context: Context,channelId:String,channelN
     }
 
     private fun createPendingIntent(context: Context, action: String,isReplayMSG:Boolean=false): PendingIntent {
-       // Log.d( "useInbox: ","e:$useInbox---------------------------------33")
+         Log.d( "createPendingIntent: ","e:$groupKey---------------------------------33")
         val intent = Intent(context, NotificationReceiver::class.java).apply {
             this.action = "com.mc_custom_notification.$action"
             putExtra("notification_id", id)
@@ -241,7 +266,7 @@ private fun createChannelNotification(context: Context,channelId:String,channelN
             putExtra("payload", HashMap(payload))
             putExtra("useInbox", useInbox)
 //            if(isReplayMSG) {
-              //  Log.d( "useInbox: ","e:$useInbox---------------------------------1")
+            //  Log.d( "useInbox: ","e:$useInbox---------------------------------1")
 //                putExtra("imageBase64", decodeBase64ToBitmap(imageBase64))
 //            }
         }
@@ -253,14 +278,15 @@ private fun createChannelNotification(context: Context,channelId:String,channelN
             setTextViewText(R.id.txtTitle, title)
             setTextViewText(R.id.incoming_call, body)
             if(imageBase64!=null){
-            decodeBase64ToBitmap(imageBase64)?.let { bitmap ->
-                setImageViewBitmap(R.id.notify_alert_caller_image, bitmap)
-            }
+                decodeBase64ToBitmap(imageBase64)?.let { bitmap ->
+                    val circularBitmap = makeCircularBitmap(bitmap)
+                    setImageViewBitmap(R.id.notify_alert_caller_image, circularBitmap)
+                }
             }
             setOnClickPendingIntent(R.id.btnDecline, declinePendingIntent)
             setOnClickPendingIntent(R.id.btnAccept, acceptPendingIntent)
-           
-       
+
+
         }
     }
 
@@ -272,95 +298,179 @@ private fun createChannelNotification(context: Context,channelId:String,channelN
                 cancel(id)
             }
         }
+        removeNotificationByTag(tag+id.toString())
     }
-    
-  
+
+
     fun cancelAll(context: Context) {
         val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.cancelAll()
+        clearMessages();
     }
-    fun removeNoit(title: String) {
-        removeNotificationByTitle(title)
+    fun removeNoit(idNoti: String,groupKeyMsg: String?=null,context: Context?=null) {
+        removeNotificationByTag(idNoti)
+        cancelNotificationSummary(groupKeyMsg,context)
+
     }
- companion object {
-     ///start group
-     private val messages = mutableListOf<NotificationCompat.MessagingStyle.Message>()
-     fun addChatMessage(context: Context, notificationModel: NotificationModel) {
-         val bitmap = notificationModel.decodeBase64ToBitmap(notificationModel.imageBase64 ?: "")
-         val person = createPerson(notificationModel.title?:"", bitmap)
-         notificationModel.createChannelNotification(context,"message_notification_channel${notificationModel.isVibration}","Message Channel Notifcation",RingtoneManager.TYPE_NOTIFICATION,false)
-         val message = NotificationCompat.MessagingStyle.Message(notificationModel.body, System.currentTimeMillis(), person)
-         messages.add(message)
-         displayNotification(context,notificationModel)
-     }
-     fun clearMessages() {
-         messages.clear()
-         Log.d("NotificationClear", "All messages have been cleared.")
-     }
-     fun removeNotificationByTitle(title: String) {
-         messages.removeAll { it.person?.name == title }
-         Log.d("NotificationDelete", "Removed messages with title: $title")
-         Log.d("NotificationDelete", "Remaining messages: $messages")
-     }
+    companion object {
+        ///start group
+        private val messagesByGroup = mutableMapOf<String, MutableList<NotificationCompat.MessagingStyle.Message>>()
+        fun createPresonMessage(notificationModel: NotificationModel):  NotificationCompat.MessagingStyle.Message {
+            // تحويل الصورة من Base64 إلى Bitmap
+            val bitmap = notificationModel.decodeBase64ToBitmap(notificationModel.imageBase64 ?: "")
+            // إذا كانت الصورة موجودة، قم بتطبيق التدوير الدائري عليها
+            val circularBitmap = bitmap?.let { notificationModel.makeCircularBitmap(it) }
 
-     private fun displayNotification(context: Context,notificationModel: NotificationModel) {
+            // إنشاء الشخص باستخدام عنوان الرسالة وبيانات أخرى مع تعيين مفتاح فريد (key)
+            val person = createPerson(notificationModel.title ?: "", circularBitmap, notificationModel.tag + notificationModel.id.toString()+"-"+notificationModel.title)
 
-         val messagingStyle = NotificationCompat.MessagingStyle("Me")
-             .setConversationTitle("Chat")
-         messages.forEach { message ->
-             messagingStyle.addMessage(message)
-         }
+            // إنشاء الرسالة باستخدام MessagingStyle
+            val message = NotificationCompat.MessagingStyle.Message(notificationModel.body, System.currentTimeMillis(), person)
+//
+//            // إضافة الرسالة إلى قائمة الرسائل
+            val groupMessages = messagesByGroup.getOrPut(notificationModel.groupKey ?: "default_group") { mutableListOf() }
+            groupMessages.add(message)
 
-         val deletePendingIntent =notificationModel.createPendingIntent(context, "DELETE_NOTI",notificationModel.useInbox)
-         val clickPendingIntent = notificationModel.createPendingIntent(context, "CLICK",notificationModel.useInbox)
-         val readPendingIntent = notificationModel.createPendingIntent(context, "READ",notificationModel.useInbox)
-         val replyPendingIntent = notificationModel.createPendingIntent(context, "REPLY",notificationModel.useInbox)
-         val hidePendingIntent = notificationModel.createPendingIntent(context, "DECLINE")
+            return message
 
-         val replyLabel = "Enter your reply"
-         val remoteInput = RemoteInput.Builder("key_text_reply")
-             .setLabel(replyLabel)
-             .build()
+        }
+        fun addChatMessage(context: Context, notificationModel: NotificationModel) {
 
-         val smallIconResId = getAppIconResourceId(context)
+            // إنشاء القناة للإشعارات
+            notificationModel.createChannelNotification(context, "message_notification_channel${notificationModel.isVibration}", "Message Channel Notification", RingtoneManager.TYPE_NOTIFICATION, false)
+            createPresonMessage(notificationModel)
+            // عرض الإشعار
+            displayNotification(context, notificationModel)
 
-         val replyAction = NotificationCompat.Action.Builder(
-             smallIconResId, "Reply", replyPendingIntent)
-             .addRemoteInput(remoteInput)
-             .build()
+        }
+        fun clearMessages(groupKey: String? = null) {
+            if (groupKey != null) {
+                messagesByGroup.remove(groupKey)
+                Log.d("NotificationClear", "Messages for group $groupKey have been cleared.")
+            } else {
+                messagesByGroup.clear()
+                Log.d("NotificationClear", "All messages have been cleared.")
+            }
+        }
+        fun cancelNotificationSummary(groupKey: String? = null, context: Context? = null) {
+            if (groupKey != null && context != null) {
+                val summaryNotificationId = groupKey.hashCode()
+                Log.d("NotificationDelete", "Summary notification for group $groupKey removed as no messages are left. $summaryNotificationId")
+                if (messagesByGroup[groupKey].isNullOrEmpty()) {
+                    messagesByGroup.remove(groupKey)
+                    NotificationManagerCompat.from(context).cancel(summaryNotificationId)
+                    Log.d("NotificationDelete", "Summary notification for group $groupKey removed as no messages are left.")
+               }
+            }
+        }
+        fun removeNotificationByTag(id: String) {
+            messagesByGroup.forEach { (groupKey, messages) ->
+                messages.removeAll { message ->
+                    val key = message.person?.key ?: ""
+                    val firstPart = key.split("-").firstOrNull()
+                    firstPart == id
+                }
+            }
+            Log.d("NotificationDelete", "Removed messages with title: $id")
+            Log.d("NotificationDelete", "Remaining messages: $messagesByGroup")
+        }
+        private fun displayNotification(context: Context, notificationModel: NotificationModel) {
+            val keyPerson = notificationModel.tag + notificationModel.id.toString()
+            val groupKey = notificationModel.groupKey ?: "default_group" // استخدام قيمة افتراضية إذا كانت groupKey فارغة
+            val groupMessages = messagesByGroup[groupKey] ?: mutableListOf()
 
-         val readAction = NotificationCompat.Action.Builder(
-             smallIconResId, "Read", readPendingIntent)
-             .build()
+            // إنشاء MessagingStyle للإشعار
+            val messagingStyle = NotificationCompat.MessagingStyle("Me")
+             //   .setConversationTitle("Chat with ${notificationModel.title ?: "Unknown"}")
+            val currentKey = notificationModel.tag + notificationModel.id.toString() + "-" + (notificationModel.title ?: "")
 
-         val hideAction = NotificationCompat.Action.Builder(
-             smallIconResId, "Hide", hidePendingIntent)
-             .build()
+            // تصفية الرسائل التي تخص هذا الشخص فقط
+            val filteredMessages = groupMessages.filter { message ->
+                val personKey = message.person?.key?.split("-")?.firstOrNull()
+                personKey == keyPerson
+            }
 
+            // إضافة الرسائل الخاصة بهذا الشخص فقط
+            filteredMessages.forEach { message ->
+                messagingStyle.addMessage(message)
+            }
 
-         val builder = NotificationCompat.Builder(context, "message_notification_channel${notificationModel.isVibration}")
-             .setSmallIcon(smallIconResId)
-             .setPriority(NotificationCompat.PRIORITY_MAX)
-             .setStyle(messagingStyle)
-             .setContentIntent(clickPendingIntent)
-             .setGroup(notificationModel.groupKey)
-             .setDeleteIntent(deletePendingIntent) // Set the delete intent
-             .addAction(replyAction)
-                 .addAction(readAction)
-                 .addAction(hideAction)
-         if(notificationModel.isVibration){
-             builder.setVibrate(longArrayOf(0L))
-         }
+            // التحقق إذا كان المستخدم الحالي جديدًا
+            val userExists = filteredMessages.any { it.person?.key == currentKey }
 
+            if (!userExists) {
+                // إذا لم يكن المستخدم موجودًا، إنشاء رسالة جديدة وإضافتها إلى الإشعار
+                val newMessage = createPresonMessage(notificationModel)
+                messagingStyle.addMessage(newMessage)
+            }
+            // Get unique person count for the group
+            val uniquePersonsCount = groupMessages.mapNotNull { it.person?.key }.toSet().size
+            val messageCount = groupMessages.size
 
+            // تحديد PendingIntents للأفعال المختلفة
+            val deletePendingIntent = notificationModel.createPendingIntent(context, "DELETE_NOTI", notificationModel.useInbox)
+            val clickPendingIntent = notificationModel.createPendingIntent(context, "CLICK", notificationModel.useInbox)
+            val readPendingIntent = notificationModel.createPendingIntent(context, "READ", notificationModel.useInbox)
+            val replyPendingIntent = notificationModel.createPendingIntent(context, "REPLY", notificationModel.useInbox)
+            val hidePendingIntent = notificationModel.createPendingIntent(context, "DECLINE")
 
-         NotificationManagerCompat.from(context).apply {
-             builder.build().let { notification ->
-                 notify(notificationModel.tag, notificationModel.id, notification)
-             }
-         }
-     }
-     //end group
+            val replyLabel = "Enter your reply"
+            val remoteInput = RemoteInput.Builder("key_text_reply")
+                .setLabel(replyLabel)
+                .build()
+
+            val smallIconResId = getAppIconResourceId(context)
+
+            val replyAction = NotificationCompat.Action.Builder(smallIconResId, "Reply", replyPendingIntent)
+                .addRemoteInput(remoteInput)
+                .build()
+
+            val readAction = NotificationCompat.Action.Builder(smallIconResId, "Read", readPendingIntent)
+                .build()
+
+            val hideAction = NotificationCompat.Action.Builder(smallIconResId, "Hide", hidePendingIntent)
+                .build()
+
+            val builder = NotificationCompat.Builder(context, "message_notification_channel${notificationModel.isVibration}")
+                .setSmallIcon(smallIconResId)
+                .setPriority(NotificationCompat.PRIORITY_MAX)
+                .setStyle(messagingStyle)
+                .setGroupAlertBehavior(NotificationCompat.GROUP_ALERT_SUMMARY)
+                .setContentIntent(clickPendingIntent)
+                .setGroup(groupKey) // استخدام groupKey الافتراضي أو القيمة الفعلية
+                .setDeleteIntent(deletePendingIntent)
+                .addAction(replyAction)
+                .addAction(readAction)
+                .addAction(hideAction)
+
+            if (notificationModel.isVibration) {
+                builder.setVibrate(longArrayOf(0L, 500L, 200L))
+            }
+
+            val summaryNotificationId = groupKey.hashCode()
+
+            val summaryNotification = NotificationCompat.Builder(context, "message_notification_channel${notificationModel.isVibration}")
+                .setSmallIcon(smallIconResId)
+                .setSubText("$messageCount Messages From $uniquePersonsCount Chat ")
+                .setGroup(groupKey)
+                .setGroupSummary(true)
+                .setPriority(NotificationCompat.PRIORITY_MAX)
+                .setContentIntent(clickPendingIntent)
+                .setGroupAlertBehavior(NotificationCompat.GROUP_ALERT_SUMMARY)
+                .addAction(replyAction)
+                .addAction(readAction)
+                .addAction(hideAction)
+                .setDeleteIntent(deletePendingIntent)
+
+            NotificationManagerCompat.from(context).apply {
+                builder.build().let { notification ->
+                    notify(notificationModel.tag, notificationModel.id, notification)
+                }
+                notify(summaryNotificationId, summaryNotification.build())
+            }
+        }
+
+        //end group
         fun getAll(context: Context): List<Map<String, Any>> {
             val notifications = mutableListOf<Map<String, Any>>()
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -382,7 +492,7 @@ private fun createChannelNotification(context: Context,channelId:String,channelN
             return notifications
         }
 
-        
+
         private fun getAppIconResourceId(context: Context): Int {
             return try {
                 val packageManager = context.packageManager
