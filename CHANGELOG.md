@@ -27,3 +27,9 @@
 ## 0.0.7
 
 * Arabic documentation
+
+## 0.0.8
+
+* Fix inbox notification 
+* Send Notification for Group
+* Reply from notificatin 
