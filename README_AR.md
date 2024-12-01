@@ -226,7 +226,7 @@ import 'package:mc_custom_notification/mc_custom_notifications.dart';
 
 ## Firebase
 
-أبداء نيئة المكتبة مع `فايربيس`
+أبداء تهيئة المكتبة مع `فايربيس`
 
 ```dart
                       McCustomNotification().initialize(
