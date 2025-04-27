@@ -18,7 +18,7 @@ Custom notifications, call notifications, message notifications, calling notific
 
 > Please contribute to the [discussion](https://github.com/metacodey/mc-custom-notification/issues) with issues.
 
-[<img src="https://meta-code-ye.com/mcwebsit/web/images/logo.png" width="200" />](https://meta-code-ye.com)
+[<img src="https://avatars.githubusercontent.com/u/170404605?v=4" width="200" />](https://meta-code-ye.com)
 
 ## screenShot
 
